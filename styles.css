@@ -10,6 +10,11 @@
     background-color: mediumturquoise;
 }
 
+.catalogo-cuerpo {
+    background-color: mediumturquoise;
+    text-align: center;
+}
+
 #container{
     margin:0px auto; 
     width: 70%;
@@ -31,7 +36,35 @@
     background-color: lightgray;
 }
 
+
+.catalogo {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 50px;
+    width: 60%;
+    margin: auto;
+}
+
+.imagen {
+    width: 150px;
+    height: 150px;
+    border: 1px solid black;
+    margin: auto;
+    background-image: url("ImgWeb/PingNada.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.precio {
+    margin-top: 15px;
+}
+
 h1{
+    text-align: center;
+}
+
+h2{
     text-align: center;
 }
 
