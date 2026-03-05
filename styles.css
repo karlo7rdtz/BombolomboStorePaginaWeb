@@ -10,11 +10,11 @@ body {
 
 .barra-menu {
     background-color: rgb(51, 51, 51);
-    overflow: hidden;
+    display: flex;
+    justify-content: flex-start;
 }
 
 .barra-menu a {
-    float: left;
     color: #f2f2f2;
     padding: 20px 16px;
     text-decoration: none;
@@ -26,6 +26,16 @@ body {
 }
 
 .barra-menu a.active {
+    background-color: #04AA6D;
+    color: white;
+}
+
+.barra-menu a.admin-link {
+    margin-left: auto;
+}
+
+.barra-menu a.admin-link-active {
+    margin-left: auto;
     background-color: #04AA6D;
     color: white;
 }
