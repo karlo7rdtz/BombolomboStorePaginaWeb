@@ -1,51 +1,68 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Catalogo</title>
-        <link rel="stylesheet" href="styles.css" />
-    </head>
+<html lang="es">
+<head>
+    <title>Catalogo</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
 <body class="catalogo-cuerpo">
 
-    <h1>Catalogo</h1>
-    <h3>Camisetas</h3>
+<div class="barra-menu">
+    <a href="index.html">Index</a>
+    <a href="mision.html">Misión</a>
+    <a href="vision.html">Visión</a>
+    <a class="active" href="catalogo.html">Catálogo</a>
+</div>
+
+<div class="catalogo-contenedor">
+
+    <div class="categorias">
+        <a href="catalogo.html" class="categoria-activa">Camisas</a>
+        <a href="zapatos.html">Zapatos</a>
+        <a href="pantalones.html">Pantalones</a>
+        <a href="chamarras.html">Chamarras</a>
+    </div>
+
+    <h2>Camisas</h2>
 
     <div class="catalogo">
 
         <div class="producto">
-            <div class="imagen"></div>
-            <div class="precio">Nada</div>
+            <img src="IMGweb/camisa1.jpg" class="imagen">
+            <div class="precio">$0.00</div>
+            <button class="boton-compra">Agregar al carrito</button>
         </div>
 
         <div class="producto">
-            <div class="imagen"></div>
-            <div class="precio">Nada</div>
+            <img src="IMGweb/camisa2.jpg" class="imagen">
+            <div class="precio">$0.00</div>
+            <button class="boton-compra">Agregar al carrito</button>
         </div>
 
         <div class="producto">
-            <div class="imagen"></div>
-            <div class="precio">Nada</div>
+            <img src="IMGweb/camisa3.jpg" class="imagen">
+            <div class="precio">$0.00</div>
+            <button class="boton-compra">Agregar al carrito</button>
         </div>
 
         <div class="producto">
-            <div class="imagen"></div>
-            <div class="precio">Nada</div>
-        </div>
-
-        <div class="producto">
-            <div class="imagen"></div>
-            <div class="precio">Nada</div>
-        </div>
-
-        <div class="producto">
-            <div class="imagen"></div>
-            <div class="precio">Nada</div>
+            <img src="IMGweb/camisa4.jpg" class="imagen">
+            <div class="precio">$0.00</div>
+            <button class="boton-compra">Agregar al carrito</button>
         </div>
 
     </div>
-            <li>
-                <a href="index.html">
-                    Regresar
-                </a>
-            </li>
+
+</div>
+
+<footer class="footer">
+    <div class="footer-contenido">
+            <p>Contacto: bombolombodudas@gmail.com</p>
+            <p>Horario: 9:00 hrs- 16:00 hrs MX</p>
+            <p>Tu opinion es importante para nosotros</p>
+            <p>© 2026 Bombolombo Store</p>
+    </div>
+</footer>
+
 </body>
 </html>
