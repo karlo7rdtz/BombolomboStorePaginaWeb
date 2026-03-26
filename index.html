@@ -32,7 +32,13 @@
     </div>
 
 <div id="app">
-        
+      <h1 class="titulo-novedades">NOVEDADES</h1> 
+
+        <div class="carrusel-tarjeta">
+            <div class="carrusel-container">
+                <img :src="imagenes[indiceActual]" :alt="'Gorra ' + (indiceActual + 1)" class="carrusel-img">
+            </div>
+        </div>    
     </div>
 
     <div class="contenido">
@@ -54,25 +60,6 @@
     </p>
 </div>
   
-  <h1 class="titulo-novedades">NOVEDADES</h1> 
-
-        <div class="carrusel-tarjeta">
-            <div class="carrusel-container">
-                <img :src="imagenes[indiceActual]" :alt="'Gorra ' + (indiceActual + 1)" class="carrusel-img">
-            </div>
-        </div>
-
-        <p class="lead">En Bombolombo Store creemos que vestir con estilo no debería ser un lujo.<br>
-        Somos una tienda en línea dedicada a ofrecer ropa de excelente calidad a precios accesibles,<br>
-        pensada para quienes quieren verse bien, sentirse cómodos y expresar su personalidad sin gastar de más.</p>
-
-        <p>Cada prenda está seleccionada cuidadosamente para brindarte comodidad,<br>
-        durabilidad y un diseño moderno que se adapta a tu día a día.</p>
-
-        <p class="fw-bold mt-4">En Bombolombo Store, la moda es para todos.<br>
-        Viste con estilo. Viste con confianza. Viste Bombolombo.</p>
-    </div>
-
     <div class="container text-center mb-5">
         <h1 class="mb-4">Síguenos en nuestras redes</h1>
         <div class="d-flex justify-content-center gap-4 flex-wrap">
