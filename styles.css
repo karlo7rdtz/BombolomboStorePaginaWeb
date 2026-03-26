@@ -279,3 +279,32 @@ h1{
 .boton-compra:hover{
     background:#999;
 }
+/* Configuración para el desplazamiento suave de los enlaces ancla */
+html {
+    scroll-behavior: smooth;
+}
+
+/* El contenedor principal que se desplazará horizontalmente */
+.slider-catalogo {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory; /* Fuerza a que el scroll se detenga exactamente en la sección */
+    scroll-behavior: smooth; /* Hace que el deslizamiento sea animado */
+    width: 100%;
+    
+    /* Ocultar la barra de desplazamiento horizontal para que se vea más limpio */
+    scrollbar-width: none; /* Para Firefox */
+}
+
+/* Ocultar barra de scroll en Chrome, Safari y Opera */
+.slider-catalogo::-webkit-scrollbar {
+    display: none;
+}
+
+/* Cada categoría ocupará el 100% del ancho del contenedor padre */
+.seccion-categoria {
+    flex: 0 0 100%;
+    min-width: 100%;
+    scroll-snap-align: start; /* Asegura que la sección quede alineada al inicio al hacer scroll */
+    padding-bottom: 20px;
+}
