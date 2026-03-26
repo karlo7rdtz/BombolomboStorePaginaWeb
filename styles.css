@@ -1,310 +1,135 @@
 body {
-    margin: 0;
-    font-family: serif;
-}
-
-.pagina-principal {
+    font-family: 'Courier New', Courier, monospace;
     background-color: rgb(24, 13, 26);
     color: white;
 }
 
-.barra-menu {
-    background-color: rgb(51, 51, 51);
-    display: flex;
-    justify-content: flex-start;
+/* --- Barra de Navegación --- */
+.bg-custom-dark {
+    background-color: rgb(51, 51, 51) !important;
 }
-
-.barra-menu a {
-    color: #f2f2f2;
-    padding: 20px 16px;
-    text-decoration: none;
+.navbar-nav .nav-link {
+    color: #f2f2f2 !important;
+    padding: 15px 16px !important;
 }
-
-.barra-menu a:hover {
+.navbar-nav .nav-link:hover {
     background-color: #ddd;
-    color: black;
+    color: black !important;
+    border-radius: 5px;
+}
+.navbar-nav .active {
+    background-color: #04AA6D !important;
+    color: white !important;
+    border-radius: 5px;
+}
+/* Estado normal del enlace de administrador (sin seleccionar) */
+.admin-link {
+    background-color: transparent; 
+    color: #f2f2f2 !important;
+    border-radius: 5px;
 }
 
-.barra-menu a.active {
-    background-color: #04AA6D;
-    color: white;
+/* Efecto al pasar el ratón por encima */
+.admin-link:hover {
+    background-color: #ddd !important;
+    color: black !important;
 }
 
-.barra-menu a.admin-link {
-    margin-left: auto;
+/* Estado activo (solo cuando estés en la página adminInventario.html) */
+.admin-link.active {
+    background-color: #04AA6D !important;
+    color: white !important;
 }
 
-.barra-menu a.admin-link-active {
-    margin-left: auto;
-    background-color: #04AA6D;
-    color: white;
-}
-
+/* --- Index / Generales --- */
 .banner {
     width: 100%;
-    height: 400px;
+    min-height: 400px;
     background-image: url("ImgWeb/TiendaGeneral.png");
     background-size: cover;
     background-position: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
-
-.logo {
-    width: 450px; 
-}
-
-.contenido {
-    text-align: center;
-    padding: 40px;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-h1{
-    text-align: center;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-.ajuste-redes {
-    display: flex;
-    justify-content: center;
-    gap: 30px;                  
-    margin-top: 40px;
-    margin-bottom: 40px;           
-}
-
 .redes {
-    width: auto; 
     height: 50px;
     object-fit: contain; 
     transition: transform 0.3s ease; 
 }
-
-
-.footer {
-    background-color: rgb(51, 51, 51);
-    color: white;
-    padding: 10px ;
-    height: auto;
+.redes:hover {
+    transform: scale(1.1);
 }
 
-.footer-contenido {
-    text-align: center;
-    font-size: 14px;
+/* --- Misión y Visión (Imágenes Laterales) --- */
+.img-lateral-izq {
+    background-image: url("ImgWeb/ImagenIzq.png");
+    background-size: cover;
+    background-position: center;
+}
+.img-lateral-der {
+    background-image: url("ImgWeb/ImagenDer.png");
+    background-size: cover;
+    background-position: center;
+}
+.contenedor-central {
+    background-color: rgb(24, 13, 26);
+    border-left: 3px solid silver;
+    border-right: 3px solid silver;
 }
 
-.mision-cuerpo{
-    margin:0;
-}
-
-.mision-cuerpo .layout{
-    display:flex;
-    height:100vh;
-}
-
-.mision-cuerpo .izquierda{
-    flex:1;
-    background-image:url("ImgWeb/ImagenIzq.png");
-    background-size:cover;
-    background-position:center;
-}
-
-.mision-cuerpo .derecha{
-    flex:1;
-    background-image:url("ImgWeb/ImagenDer.png");
-    background-size:cover;
-    background-position:center;
-}
-
-.mision-cuerpo #container1{
-    width:450px;
-    background-color:rgb(24, 13, 26);
-    border-left:3px solid silver;
-    border-right:3px solid silver;
-    color:white;
-    font-family:'Courier New', Courier, monospace;
-
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    text-align:center;
-    padding:40px;
-}
-
-.mision-cuerpo #container1 p{
-    line-height:1.6;
-}
-
-.mision-cuerpo #container1 a{
-    color:white;
-    text-decoration:none;
-    font-weight: bold;
-}
-
-.mision-cuerpo #container1 a:hover{
-    text-decoration:underline;
-}
-.vision-cuerpo{
-    margin:0;
-}
-
-.vision-cuerpo .layout{
-    display:flex;
-    height:100vh;
-}
-
-.vision-cuerpo .izquierda{
-    flex:1;
-    background-image:url("ImgWeb/ImagenIzq.png");
-    background-size:cover;
-    background-position:center;
-}
-
-.vision-cuerpo .derecha{
-    flex:1;
-    background-image:url("ImgWeb/ImagenDer.png");
-    background-size:cover;
-    background-position:center;
-}
-
-.vision-cuerpo #container2{
-    width:450px;
-    background-color:rgb(24, 13, 26);
-    border-left:3px solid silver;
-    border-right:3px solid silver;
-    color:white;
-    font-family:'Courier New', Courier, monospace;
-
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    text-align:center;
-    padding:40px;
-}
-
-.vision-cuerpo #container2 p{
-    line-height:1.6;
-}
-
-.vision-cuerpo #container2 a{
-    color:white;
-    text-decoration:none;
-    font-weight: bold;
-}
-
-.vision-cuerpo #container2 a:hover{
-    text-decoration:underline;
-}
-
-.catalogo-cuerpo{
+/* --- Catálogo --- */
+.catalogo-fondo {
     background-image: url("ImgWeb/fondoCatalogo.png");
     background-size: cover;
     background-position: center;
-    margin:0;
+    background-attachment: fixed;
 }
-
-.catalogo-contenedor{
-    width:900px;
-    margin:60px auto;
-    background:rgb(24, 13, 26);
-    border-left:3px solid silver;
-    border-right:3px solid silver;
-    border-top:3px solid silver;
-    border-bottom:3px solid silver;
-    padding:40px;
-    border-radius:10px;
+.catalogo-contenedor {
+    background: rgb(24, 13, 26);
+    border: 3px solid silver;
+    border-radius: 10px;
 }
-
-.categorias{
-    display:flex;
-    justify-content:center;
-    gap:40px;
-    margin-bottom:20px;
-}
-
-.categorias a{
-    font-size:18px;
-    text-decoration:none;
-    color:rgb(255, 255, 255);
-    cursor:pointer;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-.categoria-activa{
-    font-weight:bold;
-}
-
-.catalogo-contenedor h2{
-    text-align:center;
-    margin-bottom:30px;
-    color:rgb(255, 255, 255);
-    font-family: 'Courier New', Courier, monospace;
-}
-
-.catalogo{
-    display:grid;
-    grid-template-columns: repeat(2,1fr);
-    gap:40px;
-}
-
-.producto{
-    text-align:center;
-}
-
-.imagen{
-    width:200px;
-    height:200px;
-    margin:auto;
-}
-
-
-.precio{
-    margin-top:10px;
-    font-weight:bold;
+.categorias a {
+    font-size: 18px;
+    text-decoration: none;
     color: rgb(255, 255, 255);
     font-family: 'Courier New', Courier, monospace;
 }
-
-
-.boton-compra{
-    margin-top:10px;
-    padding:8px 18px;
-    background:#ccc;
-    border:none;
-    border-radius:20px;
-    cursor:pointer;
+.categoria-activa {
+    font-weight: bold;
+    color: #04AA6D !important;
+    text-decoration: underline;
+}
+.imagen {
+    width: 100%;
+    max-width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin: auto;
+}
+.boton-compra {
+    padding: 8px 18px;
+    background: #ccc;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.boton-compra:hover {
+    background: #999;
 }
 
-.boton-compra:hover{
-    background:#999;
-}
-/* Configuración para el desplazamiento suave de los enlaces ancla */
-html {
-    scroll-behavior: smooth;
-}
-
-/* El contenedor principal que se desplazará horizontalmente */
+/* --- Slider Horizontal Catálogo --- */
+html { scroll-behavior: smooth; }
 .slider-catalogo {
     display: flex;
     overflow-x: auto;
-    scroll-snap-type: x mandatory; /* Fuerza a que el scroll se detenga exactamente en la sección */
-    scroll-behavior: smooth; /* Hace que el deslizamiento sea animado */
+    scroll-snap-type: x mandatory; 
+    scroll-behavior: smooth; 
     width: 100%;
-    
-    /* Ocultar la barra de desplazamiento horizontal para que se vea más limpio */
-    scrollbar-width: none; /* Para Firefox */
+    scrollbar-width: none; 
 }
-
-/* Ocultar barra de scroll en Chrome, Safari y Opera */
-.slider-catalogo::-webkit-scrollbar {
-    display: none;
-}
-
-/* Cada categoría ocupará el 100% del ancho del contenedor padre */
+.slider-catalogo::-webkit-scrollbar { display: none; }
 .seccion-categoria {
     flex: 0 0 100%;
     min-width: 100%;
-    scroll-snap-align: start; /* Asegura que la sección quede alineada al inicio al hacer scroll */
-    padding-bottom: 20px;
+    scroll-snap-align: start; 
 }
