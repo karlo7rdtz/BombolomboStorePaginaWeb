@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Administrador de Inventario</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Gaeljg/StylesFormsCss@main/stylesForms.css?v=2">
+</head>
+
+<body class="catalogo-cuerpo">
+
+<div class="barra-menu">
+    <a href="index.html">Index</a>
+    <a href="mision.html">Misión</a>
+    <a href="vision.html">Visión</a>
+    <a href="catalogo.html">Catálogo</a>
+    <a href="adminInventario.html" class="admin-link-active">Administrador de Inventario</a>
+</div>
+
+<div class="catalogo-contenedor">
+
+
+    <h2>Administrador de inventario</h2>
+
+    <div class="catalogo">
+
+        <div class="formulario">
+            <h3>Agregar Producto</h3>
+            <form action="inventario" class="form-container">
+                <input type="text" name="nombre" placeholder="Nombre del producto" required>
+
+                <input type="number" name="cantidad" placeholder="Cantidad" min="0">
+
+                <select name="tipo_prenda">
+                    <option value="" disabled selected>Selecciona tipo de prenda</option>
+                    <option value="camisa">Camisa / Camiseta</option>
+                    <option value="chaqueta">Chamarra</option>
+                    <option value="accesorio">Accesorio</option>
+                </select>
+
+                <textarea name="descripcion" placeholder="Descripción del producto" rows="3"></textarea>
+            
+                <input type="submit" value="Hecho">
+            </form>
+        </div>
+
+        <div class="formulario">
+            <h3>Actualizar Producto</h3>
+            <form action="inventario" class="form-container">
+                <select name="accion" aria-placeholder="Seleccione prenda">
+                    <option value="update">Prenda 1</option>
+                    <option value="update">Prenda 2</option>
+                    <option value="update">Prenda 3</option>
+                    <option value="update">Prenda 4</option>
+                </select>
+
+                <textarea name="cantidad" placeholder="Cantidad" rows="1"></textarea>
+
+                <textarea name="tipo_prenda" placeholder="Tipo de prenda" rows="1" readonly></textarea>
+
+                <textarea name="descripcion" placeholder="Descripción del producto" rows="3"></textarea>
+            
+                <input type="submit" value="Hecho">
+            </form>
+        </div>
+
+        <div class="formulario">
+            <h3>Eliminar Producto</h3>
+            <form action="inventario" class="form-container">
+                <select name="accion" aria-placeholder="Seleccione prenda">
+                    <option value="update">Prenda 1</option>
+                    <option value="update">Prenda 2</option>
+                    <option value="update">Prenda 3</option>
+                    <option value="update">Prenda 4</option>
+                </select>
+
+                <textarea name="cantidad" placeholder="Cantidad" rows="1" readonly></textarea>
+
+                <textarea name="tipo_prenda" placeholder="Tipo de prenda" rows="1" readonly></textarea>
+
+                <textarea name="descripcion" placeholder="Descripción del producto" rows="3"></textarea>
+            
+                <input type="submit" value="Hecho">
+            </form>
+        </div>
+
+
+    </div>
+
+</div>
+
+<footer class="footer">
+    <div class="footer-contenido">
+            <p>Contacto: bombolombodudas@gmail.com</p>
+            <p>Horario: 9:00 hrs- 16:00 hrs MX</p>
+            <p>Tu opinion es importante para nosotros</p>
+            <p>© 2026 Bombolombo Store</p>
+    </div>
+</footer>
+
+</body>
+</html>
