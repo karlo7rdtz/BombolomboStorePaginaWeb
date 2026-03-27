@@ -34,12 +34,16 @@
     </div>
 
 <div id="app">
-    <h1 class="titulo-novedades">NOVEDADES</h1> 
+    <h1 class="titulo-novedades">NOVEDADES</h1>
     <div class="carrusel-tarjeta">
         <div class="carrusel-container">
-            <img v-bind:src="imagenes[indiceActual]" 
-                 v-bind:alt="'Gorra ' + (indiceActual + 1)" 
+            <img v-bind:src="novedades[indiceActual].imagen"
+                 v-bind:alt="novedades[indiceActual].nombre"
                  class="carrusel-img">
+            
+            <div class="text-center mt-2 text-white">
+                <p class="fw-bold">{{ novedades[indiceActual].nombre }}</p>
+            </div>
         </div>
     </div>    
 </div>

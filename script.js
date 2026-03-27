@@ -67,18 +67,35 @@ if (contenedorVision) {
 }
 
 if (document.getElementById('app')) {
-        const { createApp } = Vue;
-        createApp({
-            data() {
-                return {
-                    imagenes: ['IMGWeb/gorra1.png', 'IMGWeb/gorra2.png', 'IMGWeb/gorra3.png', 'IMGWeb/gorra4.png'],
-                    indiceActual: 0
-                }
-            },
-            mounted() { setInterval(() => { this.siguienteImagen(); }, 3000); },
-            methods: { siguienteImagen() { this.indiceActual = (this.indiceActual + 1) % this.imagenes.length; } }
-        }).mount('#app');
-    }
+    const { createApp } = Vue;
+
+    createApp({
+        data() {
+            return {
+
+                novedades: [
+                    { id: 1, nombre: 'Gorra 1', imagen: 'IMGWeb/gorra1.png', stock: 10 },
+                    { id: 2, nombre: 'Gorra 2', imagen: 'IMGWeb/gorra2.png', stock: 8 },
+                    { id: 3, nombre: 'Gorra 3', imagen: 'IMGWeb/gorra3.png', stock: 7 },
+                    { id: 4, nombre: 'Gorra 4', imagen: 'IMGWeb/gorra4.png', stock: 5 }
+                ],
+                indiceActual: 0
+            }
+        },
+        mounted() {
+
+            setInterval(() => {
+                this.siguienteImagen();
+            }, 3000);
+        },
+        methods: {
+            siguienteImagen() {
+
+                this.indiceActual = (this.indiceActual + 1) % this.novedades.length;
+            }
+        }
+    }).mount('#app');
+}
 
 
 const regForm = document.getElementById('register-form');
