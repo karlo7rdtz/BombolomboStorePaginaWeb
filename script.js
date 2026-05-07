@@ -178,3 +178,58 @@ if (regForm) {
             alert('¡Cuenta creada con éxito!');
         });    
 }});
+
+const API_URL = 'http://127.0.0.1:5000/productos';
+
+// --- LOGICA PARA ALMACENAR (POST) ---
+document.getElementById('form-agregar').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const producto = {
+        nombre: document.getElementById('add-nombre').value,
+        cantidad_stock: parseInt(document.getElementById('add-cantidad').value),
+        precio: parseFloat(document.getElementById('add-precio').value),
+        tipo_prenda: document.getElementById('add-tipo').value,
+        descripcion: document.getElementById('add-descripcion').value
+    };
+
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(producto)
+        });
+
+        const data = await response.json();
+        alert(data.mensaje);
+        e.target.reset(); // Limpiar formulario
+    } catch (error) {
+        console.error("Error:", error);
+        alert("No se pudo conectar con el servidor Flask.");
+    }
+});
+
+// --- LOGICA PARA ACTUALIZAR (PUT) ---
+document.getElementById('form-actualizar').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById('upd-id').value;
+    const datosNuevos = {
+        cantidad_stock: parseInt(document.getElementById('upd-cantidad').value),
+        descripcion: document.getElementById('upd-descripcion').value
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datosNuevos)
+        });
+
+        const data = await response.json();
+        alert(data.mensaje);
+        e.target.reset();
+    } catch (error) {
+        alert("Error al actualizar el producto.");
+    }
+});
