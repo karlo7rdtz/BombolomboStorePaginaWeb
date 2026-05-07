@@ -48,6 +48,36 @@ def registro():
         cur.close()
         conn.close()
 
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    correo = data.get('user_login') # Usamos el name que tienes en tu HTML
+    contrasena = data.get('pass_login')
+
+    conn = get_db_connection()
+    if conn is None:
+        return jsonify({"error": "Base de datos desconectada."}), 500
+    
+    cur = conn.cursor()
+    try:
+        # Buscamos al usuario por su correo
+        cur.execute("SELECT nombre_usuario, contrasena, rol FROM usuarios WHERE correo_electronico = %s", (correo,))
+        usuario = cur.fetchone()
+
+        # Verificamos que exista y que la contraseña coincida
+        if usuario and check_password_hash(usuario[1], contrasena):
+            return jsonify({
+                "mensaje": f"¡Bienvenido, {usuario[0]}!",
+                "rol": usuario[2]
+            }), 200
+        else:
+            return jsonify({"error": "Correo o contraseña incorrectos."}), 401
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        conn.close()
+
 if __name__ == '__main__':
     # Arranca el servidor backend en el puerto 5000
     app.run(debug=True, port=5000)
