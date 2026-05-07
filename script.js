@@ -96,6 +96,7 @@ if (document.getElementById('app')) {
         },
         data() {
             return {
+                mostrarLogin: true,
                 novedades: [
                     { id: 1, nombre: 'Gorra 1', imagen: 'IMGWeb/gorra1.png', stock: 10 },
                     { id: 2, nombre: 'Gorra 2', imagen: 'IMGWeb/gorra2.png', stock: 8 },

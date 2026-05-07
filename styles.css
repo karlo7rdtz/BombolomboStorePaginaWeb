@@ -393,3 +393,16 @@ footer {
     width: 100%;
 }
 }
+
+.link-verde {
+    color: #04AA6D;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: 'Courier New', Courier, monospace; 
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.link-verde:hover {
+    color: #058f5c;
+}
