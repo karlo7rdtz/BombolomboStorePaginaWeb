@@ -60,10 +60,11 @@ body {
     margin-bottom: 20px; 
     letter-spacing: 3px;
     text-transform: uppercase;
+
 }
 
-
 .carrusel-tarjeta {
+    flex-grow: 1; 
     margin: 0 auto 40px auto; 
     max-width: 300px; 
     background-color: #2a2a2a; 
@@ -124,8 +125,7 @@ body {
 
 .redes {
     height: 50px;
-    object-fit: contain; 
-    transition: transform 0.3s ease; 
+    transition: transform 0.3s ease;
 }
 .redes:hover {
     transform: scale(1.1);
@@ -133,11 +133,13 @@ body {
 
 .img-lateral-izq {
     background-image: url("ImgWeb/ImagenIzq.png");
+    min-height: 90vh;
     background-size: cover;
     background-position: center;
 }
 .img-lateral-der {
     background-image: url("ImgWeb/ImagenDer.png");
+    min-height: 90vh;
     background-size: cover;
     background-position: center;
 }
@@ -145,6 +147,7 @@ body {
     background-color: rgb(24, 13, 26);
     border-left: 3px solid silver;
     border-right: 3px solid silver;
+    flex: 1;
 }
 
 .catalogo-fondo {
@@ -362,4 +365,44 @@ h3 {
 .password-wrapper, .formulario {
     position: relative; 
     margin-bottom: 25px;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgb(24, 13, 26);
+    color: white;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content-wrapper {
+    flex: 1;
+}
+
+footer {
+    margin-top: auto !important;
+    footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+}
+
+.link-verde {
+    color: #04AA6D;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: 'Courier New', Courier, monospace; 
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.link-verde:hover {
+    color: #058f5c;
 }
