@@ -66,13 +66,36 @@ if (contenedorVision) {
     `;
 }
 
+const AppFooter = {
+    template: `
+    <footer class="bg-custom-dark text-white text-center py-4 mt-auto">
+        <div class="container">
+            <p class="mb-1">Contacto: bombolombodudas@gmail.com</p>
+            <p class="mb-1">Horario: 9:00 hrs- 16:00 hrs MX</p>
+            <p class="mb-1">Tu opinion es importante para nosotros</p>
+            <p class="mb-3">© 2026 Bombolombo Store</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="https://jigsaw.w3.org/css-validator/check/referer">
+                    <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss" alt="¡CSS Válido!">
+                </a>
+                <a href="https://jigsaw.w3.org/css-validator/check/referer">
+                    <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="¡CSS Válido!">
+                </a>
+            </div>
+        </div>
+    </footer>
+    `
+};
+
 if (document.getElementById('app')) {
     const { createApp } = Vue;
 
     createApp({
+        components: {
+            'app-footer': AppFooter
+        },
         data() {
             return {
-
                 novedades: [
                     { id: 1, nombre: 'Gorra 1', imagen: 'IMGWeb/gorra1.png', stock: 10 },
                     { id: 2, nombre: 'Gorra 2', imagen: 'IMGWeb/gorra2.png', stock: 8 },
@@ -83,20 +106,19 @@ if (document.getElementById('app')) {
             }
         },
         mounted() {
-
-            setInterval(() => {
-                this.siguienteImagen();
-            }, 3000);
+            if (this.novedades && this.novedades.length > 0) {
+                setInterval(() => {
+                    this.siguienteImagen();
+                }, 3000);
+            }
         },
         methods: {
             siguienteImagen() {
-
                 this.indiceActual = (this.indiceActual + 1) % this.novedades.length;
             }
         }
     }).mount('#app');
 }
-
 
 const regForm = document.getElementById('register-form');
 if (regForm) {
@@ -153,5 +175,5 @@ if (regForm) {
         ])
         .onSuccess((event) => {
             alert('¡Cuenta creada con éxito!');
-        });
+        });    
 }});

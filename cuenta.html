@@ -9,11 +9,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Gaeljg/StylesFormsCss@main/stylesForms.css?v=1">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="catalogo-cuerpo">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-custom-dark">
+<div id="app"> <nav class="navbar navbar-expand-lg navbar-dark bg-custom-dark">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal">
                 <span class="navbar-toggler-icon"></span>
@@ -93,21 +94,25 @@
         </div>
     </div>
 
-    <footer class="bg-custom-dark text-white text-center py-4">
-        <div class="container">
-            <p class="mb-1">Contacto: bombolombodudas@gmail.com</p>
-            <p class="mb-1">Horario: 9:00 hrs- 16:00 hrs MX</p>
-            <p class="mb-1">Tu opinion es importante para nosotros</p>
-            <p class="mb-3">© 2026 Bombolombo Store</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="https://jigsaw.w3.org/css-validator/check/referer"><img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss" alt="¡CSS Válido!" /></a>
-                <a href="https://jigsaw.w3.org/css-validator/check/referer"><img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="¡CSS Válido!" /></a>
-            </div>
-        </div>
-    </footer>
+    <app-footer></app-footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
     <script src="script.js"></script>
+    
+    <script>
+    
+        function togglePass(id, icon) {
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+    </script>
 </body>
 </html>
