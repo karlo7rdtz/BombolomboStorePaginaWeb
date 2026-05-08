@@ -97,12 +97,9 @@ const app = createApp({
     },
     mounted() {
         this.verificarSesion();
-<<<<<<< HEAD
+
         this.cargarProductos(); // Cargamos los productos de la BD al iniciar
-=======
-        this.cargarProductos(); // <-- Carga los productos apenas entras
-        this.verificarSesion();
->>>>>>> 291ccb7fbf29f4d4b7c520226fb226ea70292d85
+
 
         if (this.novedades.length > 0) {
             setInterval(() => this.siguienteImagen(), 3000);

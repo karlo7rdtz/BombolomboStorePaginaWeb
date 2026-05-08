@@ -145,7 +145,7 @@ def verificar_email():
         cur.close()
         conn.close()
 
-<<<<<<< HEAD
+
 @app.route('/api/productos', methods=['GET'])
 def listar_productos():
     conn = get_db_connection()
@@ -173,7 +173,7 @@ def listar_productos():
     conn.close()
     return jsonify(lista)
 
-=======
+
 # --- RUTA PARA OBTENER TODOS LOS PRODUCTOS (Para el Catálogo) ---
 @app.route('/api/productos', methods=['GET'])
 def obtener_productos():
@@ -211,6 +211,6 @@ def agregar_producto():
         cur.close()
         conn.close()
         
->>>>>>> 291ccb7fbf29f4d4b7c520226fb226ea70292d85
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
