@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import psycopg2
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 # Esto es vital: permite que tu Live Server (puerto 5500) hable con Flask (puerto 5000)
@@ -68,7 +68,8 @@ def login():
         if usuario and check_password_hash(usuario[1], contrasena):
             return jsonify({
                 "mensaje": f"¡Bienvenido, {usuario[0]}!",
-                "rol": usuario[2]
+                "rol": usuario[2],
+                "nombre": usuario[0]  # <-- AGREGAMOS ESTA LÍNEA
             }), 200
         else:
             return jsonify({"error": "Correo o contraseña incorrectos."}), 401

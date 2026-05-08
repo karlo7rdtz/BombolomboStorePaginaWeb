@@ -1,4 +1,4 @@
-
+// 1. Función para mostrar/ocultar contraseña
 function togglePass(id, el) {
     const input = document.getElementById(id);
     if (input) {
@@ -12,121 +12,188 @@ function togglePass(id, el) {
     }
 }
 
+// 2. Todo lo que se ejecuta al cargar la página (Vue y Novedades)
 document.addEventListener('DOMContentLoaded', () => {
 
-const contenedorAcerca = document.getElementById('seccion-acerca');
+    // Leemos el rol guardado para ocultar el botón de administrador
+    const rolActual = localStorage.getItem('rolUsuario');
+    const nombreActual = localStorage.getItem('nombreUsuario');
+    
+    const linkCuenta = document.getElementById('link-cuenta');
+    const userGreeting = document.getElementById('user-greeting');
+    const btnLogout = document.getElementById('btn-logout');
+    const adminLinks = document.querySelectorAll('.admin-link');
 
-if (contenedorAcerca) {
-    contenedorAcerca.innerHTML = `
-        <div class="contenido">
-            <h1>Acerca de nosotros</h1>
-            <h2>Bombolombo Store</h2>
-            <p>En Bombolombo Store creemos que vestir con estilo no debería ser un lujo<br>
-               Somos una tienda en línea dedicada a ofrecer ropa de excelente calidad a precios accesibles,<br>
-               pensada para quienes quieren verse bien, sentirse cómodos y expresar su personalidad sin gastar de más
-            </p>
-            <p>Cada prenda está seleccionada cuidadosamente para brindarte comodidad,<br>
-               durabilidad y un diseño moderno que se adapta a tu día a día</p>
-            <p>En Bombolombo Store, la moda es para todos<br>
-               <strong>Viste con estilo</strong><br>
-               <strong>Viste con confianza</strong><br>
-               <strong>Viste Bombolombo</strong>
-            </p>
-        </div>
-    `;
-}
+    // 1. Gestión de Admin Links (Ya lo tenías)
+    if (rolActual !== 'admin') {
+        adminLinks.forEach(link => link.style.display = 'none');
+    }
 
-const contenedorMision = document.getElementById('seccion-mision');
-
-if (contenedorMision) {
-    contenedorMision.innerHTML = `
-        <h1 class="mb-4">Misión</h1>
-        <p class="mb-4" style="line-height: 1.6;" align="center">
-            Tenemos como misión ofrecer ropa de buena calidad a precios accesibles,
-            permitiendo que las personas puedan vestir con estilo, comodidad y confianza
-            sin tener que gastar cantidades exageradas por un conjunto.
-            En Bombolombo Store creemos que la moda debe estar al alcance de todos.
-        </p>
-        <a href="index.html" class="text-white fw-bold" style="text-decoration: none; border: 1px solid white; padding: 10px 20px; border-radius: 5px;">Regresar</a>
-    `;
-}
-
-const contenedorVision = document.getElementById('seccion-vision');
-
-if (contenedorVision) {
-    contenedorVision.innerHTML = `
-        <h1 class="mb-4">Visión</h1>
-        <p class="mb-4" style="line-height: 1.6;" align="center">
-            Tenemos como meta convertirnos en una marca reconocida a nivel mundial,
-            destacando por nuestra calidad, accesibilidad y estilo,
-            con el objetivo de establecer al menos una tienda física en cada ciudad importante y
-            consolidarnos como una de las principales opciones en el mercado de moda urbana.
-        </p>
-        <a href="index.html" class="text-white fw-bold" style="text-decoration: none; border: 1px solid white; padding: 10px 20px; border-radius: 5px;">Regresar</a>
-    `;
-}
-
-const AppFooter = {
-    template: `
-    <footer class="bg-custom-dark text-white text-center py-4 mt-auto">
-        <div class="container">
-            <p class="mb-1">Contacto: bombolombodudas@gmail.com</p>
-            <p class="mb-1">Horario: 9:00 hrs- 16:00 hrs MX</p>
-            <p class="mb-1">Tu opinion es importante para nosotros</p>
-            <p class="mb-3">© 2026 Bombolombo Store</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="https://jigsaw.w3.org/css-validator/check/referer">
-                    <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss" alt="¡CSS Válido!">
-                </a>
-                <a href="https://jigsaw.w3.org/css-validator/check/referer">
-                    <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="¡CSS Válido!">
-                </a>
-            </div>
-        </div>
-    </footer>
-    `
-};
-
-if (document.getElementById('app')) {
-    const { createApp } = Vue;
-
-    createApp({
-        components: {
-            'app-footer': AppFooter
-        },
-        data() {
-            return {
-                mostrarLogin: true,
-                novedades: [
-                    { id: 1, nombre: 'Gorra 1', imagen: 'IMGWeb/gorra1.png', stock: 10 },
-                    { id: 2, nombre: 'Gorra 2', imagen: 'IMGWeb/gorra2.png', stock: 8 },
-                    { id: 3, nombre: 'Gorra 3', imagen: 'IMGWeb/gorra3.png', stock: 7 },
-                    { id: 4, nombre: 'Gorra 4', imagen: 'IMGWeb/gorra4.png', stock: 5 }
-                ],
-                indiceActual: 0
-            }
-        },
-        mounted() {
-            if (this.novedades && this.novedades.length > 0) {
-                setInterval(() => {
-                    this.siguienteImagen();
-                }, 3000);
-            }
-        },
-        methods: {
-            siguienteImagen() {
-                this.indiceActual = (this.indiceActual + 1) % this.novedades.length;
-            }
+    // 2. Gestión de Sesión (Saludo y Botón de Salir)
+    if (nombreActual) {
+        // Si hay sesión: ocultamos "Cuenta" y mostramos el saludo
+        if (linkCuenta) linkCuenta.style.display = 'none';
+        if (userGreeting) {
+            userGreeting.textContent = `Hola ${nombreActual}`;
+            userGreeting.classList.remove('d-none');
         }
-    }).mount('#app');
-}
+        if (btnLogout) btnLogout.classList.remove('d-none');
+    }
 
-const regForm = document.getElementById('register-form');
-if (regForm) {
-    const validation = new window.JustValidate('#register-form', {
-        errorFieldCssClass: 'is-invalid',
-        validateBeforeSubmitting: true, 
-    });
+    const contenedorAcerca = document.getElementById('seccion-acerca');
+    if (contenedorAcerca) {
+        contenedorAcerca.innerHTML = `
+            <div class="contenido">
+                <h1>Acerca de nosotros</h1>
+                <h2>Bombolombo Store</h2>
+                <p>En Bombolombo Store creemos que vestir con estilo no debería ser un lujo<br>
+                   Somos una tienda en línea dedicada a ofrecer ropa de excelente calidad a precios accesibles,<br>
+                   pensada para quienes quieren verse bien, sentirse cómodos y expresar su personalidad sin gastar de más
+                </p>
+                <p>Cada prenda está seleccionada cuidadosamente para brindarte comodidad,<br>
+                   durabilidad y un diseño moderno que se adapta a tu día a día</p>
+                <p>En Bombolombo Store, la moda es para todos<br>
+                   <strong>Viste con estilo</strong><br>
+                   <strong>Viste con confianza</strong><br>
+                   <strong>Viste Bombolombo</strong>
+                </p>
+            </div>
+        `;
+    }
+
+    const contenedorMision = document.getElementById('seccion-mision');
+    if (contenedorMision) {
+        contenedorMision.innerHTML = `
+            <h1 class="mb-4">Misión</h1>
+            <p class="mb-4" style="line-height: 1.6;" align="center">
+                Tenemos como misión ofrecer ropa de buena calidad a precios accesibles,
+                permitiendo que las personas puedan vestir con estilo, comodidad y confianza
+                sin tener que gastar cantidades exageradas por un conjunto.
+                En Bombolombo Store creemos que la moda debe estar al alcance de todos.
+            </p>
+            <a href="index.html" class="text-white fw-bold" style="text-decoration: none; border: 1px solid white; padding: 10px 20px; border-radius: 5px;">Regresar</a>
+        `;
+    }
+
+    const contenedorVision = document.getElementById('seccion-vision');
+    if (contenedorVision) {
+        contenedorVision.innerHTML = `
+            <h1 class="mb-4">Visión</h1>
+            <p class="mb-4" style="line-height: 1.6;" align="center">
+                Tenemos como meta convertirnos en una marca reconocida a nivel mundial,
+                destacando por nuestra calidad, accesibilidad y estilo,
+                con el objetivo de establecer al menos una tienda física en cada ciudad importante y
+                consolidarnos como una de las principales opciones en el mercado de moda urbana.
+            </p>
+            <a href="index.html" class="text-white fw-bold" style="text-decoration: none; border: 1px solid white; padding: 10px 20px; border-radius: 5px;">Regresar</a>
+        `;
+    }
+
+    const AppFooter = {
+        template: `
+        <footer class="bg-custom-dark text-white text-center py-4 mt-auto">
+            <div class="container">
+                <p class="mb-1">Contacto: bombolombodudas@gmail.com</p>
+                <p class="mb-1">Horario: 9:00 hrs- 16:00 hrs MX</p>
+                <p class="mb-1">Tu opinion es importante para nosotros</p>
+                <p class="mb-3">© 2026 Bombolombo Store</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="https://jigsaw.w3.org/css-validator/check/referer">
+                        <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss" alt="¡CSS Válido!">
+                    </a>
+                    <a href="https://jigsaw.w3.org/css-validator/check/referer">
+                        <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="¡CSS Válido!">
+                    </a>
+                </div>
+            </div>
+        </footer>
+        `
+    };
+
+    if (document.getElementById('app')) {
+        const { createApp } = Vue;
+
+        createApp({
+            components: {
+                'app-footer': AppFooter
+            },
+            data() {
+                return {
+                    mostrarLogin: true,
+                    novedades: [
+                        { id: 1, nombre: 'Gorra 1', imagen: 'IMGWeb/gorra1.png', stock: 10 },
+                        { id: 2, nombre: 'Gorra 2', imagen: 'IMGWeb/gorra2.png', stock: 8 },
+                        { id: 3, nombre: 'Gorra 3', imagen: 'IMGWeb/gorra3.png', stock: 7 },
+                        { id: 4, nombre: 'Gorra 4', imagen: 'IMGWeb/gorra4.png', stock: 5 }
+                    ],
+                    indiceActual: 0
+                }
+            },
+            mounted() {
+                if (this.novedades && this.novedades.length > 0) {
+                    setInterval(() => {
+                        this.siguienteImagen();
+                    }, 3000);
+                }
+            },
+            methods: {
+                siguienteImagen() {
+                    this.indiceActual = (this.indiceActual + 1) % this.novedades.length;
+                }
+            }
+        }).mount('#app');
+    }
+}); // <-- AQUÍ TERMINA EL DOMContentLoaded
+
+// -------------------------------------------------------------
+// 3. LOGICA DE INICIAR SESIÓN (Fetch al Backend)
+// -------------------------------------------------------------
+document.addEventListener('submit', async (e) => {
+    
+    if (e.target && e.target.id === 'login-form') {
+        
+        e.preventDefault(); 
+
+        const datosLogin = {
+            user_login: document.querySelector('input[name="user_login"]').value,
+            pass_login: document.getElementById('pass_login').value
+        };
+
+        try {
+            const response = await fetch('http://localhost:5000/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datosLogin)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.mensaje); 
+                localStorage.setItem('rolUsuario', data.rol);
+                localStorage.setItem('nombreUsuario', data.nombre); // <-- GUARDAMOS EL NOMBRE
+                window.location.href = 'catalogo.html'; 
+            } else {
+                alert('Error: ' + data.error); 
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('No se pudo conectar con el servidor.');
+        }
+    }
+});
+
+// -------------------------------------------------------------
+// 4. LOGICA DE REGISTRO (JustValidate + Fetch al Backend)
+// -------------------------------------------------------------
+setTimeout(() => {
+    const regForm = document.getElementById('register-form');
+    
+    if (regForm) {
+        const validation = new window.JustValidate('#register-form', {
+            errorFieldCssClass: 'is-invalid',
+            validateBeforeSubmitting: true, 
+        });
 
     validation
 
@@ -178,58 +245,3 @@ if (regForm) {
             alert('¡Cuenta creada con éxito!');
         });    
 }});
-
-const API_URL = 'http://127.0.0.1:5000/productos';
-
-// --- LOGICA PARA ALMACENAR (POST) ---
-document.getElementById('form-agregar').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const producto = {
-        nombre: document.getElementById('add-nombre').value,
-        cantidad_stock: parseInt(document.getElementById('add-cantidad').value),
-        precio: parseFloat(document.getElementById('add-precio').value),
-        tipo_prenda: document.getElementById('add-tipo').value,
-        descripcion: document.getElementById('add-descripcion').value
-    };
-
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(producto)
-        });
-
-        const data = await response.json();
-        alert(data.mensaje);
-        e.target.reset(); // Limpiar formulario
-    } catch (error) {
-        console.error("Error:", error);
-        alert("No se pudo conectar con el servidor Flask.");
-    }
-});
-
-// --- LOGICA PARA ACTUALIZAR (PUT) ---
-document.getElementById('form-actualizar').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const id = document.getElementById('upd-id').value;
-    const datosNuevos = {
-        cantidad_stock: parseInt(document.getElementById('upd-cantidad').value),
-        descripcion: document.getElementById('upd-descripcion').value
-    };
-
-    try {
-        const response = await fetch(`${API_URL}/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datosNuevos)
-        });
-
-        const data = await response.json();
-        alert(data.mensaje);
-        e.target.reset();
-    } catch (error) {
-        alert("Error al actualizar el producto.");
-    }
-});

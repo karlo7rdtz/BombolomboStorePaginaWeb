@@ -265,12 +265,23 @@ h3 {
 }
 
 .just-validate-error-label {
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    color: #ff4d4d !important;
-    margin-top: -5px;
-    margin-bottom: 10px;
-    display: block;
+    position: relative !important; 
+    display: table !important;     
+    background: white !important;
+    color: #333 !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 13px !important;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3) !important;
+    margin-top: 8px !important;
+    z-index: 100;
+    border: 1px solid #ccc !important;
+}
+
+
+.form-control.is-invalid {
+    color: white !important; 
 }
 
 .contenedor-central {
@@ -405,4 +416,10 @@ footer {
 
 .link-verde:hover {
     color: #058f5c;
+}
+
+.navbar-nav #user-greeting:hover {
+    background-color: transparent !important;
+    color: #04AA6D !important;
+    cursor: default;
 }

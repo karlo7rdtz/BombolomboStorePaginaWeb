@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Gaeljg/StylesFormsCss@main/stylesForms.css?v=1">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="ImgWeb/LogoBombolomboStorePng.png">
+    <script>
+        // Si la persona que intenta abrir esto no es admin, lo pateamos al inicio
+        if (localStorage.getItem('rolUsuario') !== 'admin') {
+            window.location.replace('index.html');
+        }
+    </script>
 </head>
 
 <body class="catalogo-cuerpo"> 
