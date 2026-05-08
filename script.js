@@ -30,8 +30,7 @@ const app = createApp({
                 { id: 4, nombre: 'Gorra 4', imagen: 'IMGWeb/gorra4.png', stock: 5 }
             ],
             indiceActual: 0,
-
-            productos: [] // Aquí guardaremos la ropa de la base de datos
+            productos: []
         }
     },
     methods: {
@@ -50,7 +49,7 @@ const app = createApp({
                 this.usuarioLogueado = true;
                 this.nombreUsuario = nombre;
                 this.usuarioRol = rol;
-                this.mostrarLogin = false; // Oculta el login si ya hay sesión
+                this.mostrarLogin = false; 
             }
         },
         async cargarProductos() {
@@ -64,20 +63,17 @@ const app = createApp({
             }
         },
         filtrarPor(tipo) {
-            // Filtramos usando tu columna exacta de la base de datos
             return this.productos.filter(p => p.tipo_prenda === tipo);
         }
     },
     mounted() {
         this.verificarSesion();
-        this.cargarProductos(); // <-- Carga los productos apenas entras
-        this.verificarSesion();
+        this.cargarProductos(); 
 
         if (this.novedades.length > 0) {
             setInterval(() => this.siguienteImagen(), 3000);
         }
 
-        // Inyección dinámica para las otras páginas
         this.$nextTick(() => {
             const contenedorAcerca = document.getElementById('seccion-acerca');
             if (contenedorAcerca) {
@@ -110,7 +106,6 @@ const app = createApp({
     }
 });
 
-// Componente Global: Footer
 app.component('app-footer', {
     template: `
     <footer class="bg-custom-dark text-white text-center py-4 mt-auto">
@@ -129,11 +124,11 @@ app.component('app-footer', {
     </footer>`
 });
 
-// Montamos la aplicación Vue
 app.mount('#app');
 
-// 3. Lógica de Iniciar Sesión
+// 3. Lógica de Iniciar Sesión y Agregar Producto
 document.addEventListener('submit', async (e) => {
+    
     if (e.target && e.target.id === 'login-form') {
         e.preventDefault();
         const datosLogin = {
@@ -160,7 +155,7 @@ document.addEventListener('submit', async (e) => {
             alert('No se pudo conectar con el servidor.');
         }
     }
-    // NUEVO: Lógica para el formulario de Agregar Producto del Administrador
+
     if (e.target && e.target.id === 'form-agregar') {
         e.preventDefault();
         
@@ -170,7 +165,7 @@ document.addEventListener('submit', async (e) => {
             precio: document.getElementById('add-precio').value,
             tipo_prenda: document.getElementById('add-tipo').value,
             descripcion: document.getElementById('add-descripcion').value,
-            imagen_url: document.getElementById('add-imagen').value // Nuevo campo para la ruta
+            imagen_url: document.getElementById('add-imagen').value 
         };
 
         try {
@@ -192,79 +187,81 @@ document.addEventListener('submit', async (e) => {
     }
 });
 
-// 4. Lógica de Registro (JustValidate + AJAX Completo)
+// 4. Lógica de Registro (JustValidate + AJAX + CONTENEDORES FIJOS)
 setTimeout(() => {
     const regForm = document.getElementById('register-form');
     
     if (regForm) {
         const validation = new window.JustValidate('#register-form', {
-            errorFieldCssClass: 'is-invalid'
+            validateBeforeSubmitting: true // Permite que valide mientras escribes
         });
 
         validation
             .addField('#reg_user', [
                 { rule: 'required', errorMessage: 'Completa este campo' },
                 {
-                    // AJAX: Validar Nombre de Usuario en tiempo real
-                    validator: async (value) => {
+                    validator: (value) => {
                         if (!value) return true;
-                        const response = await fetch(`http://localhost:5000/api/verificar-usuario?usuario=${value}`);
-                        const data = await response.json();
-                        return !data.existe; // Devuelve true si NO existe
+                        return fetch(`http://localhost:5000/api/verificar-usuario?usuario=${value}&t=${Date.now()}`)
+                            .then(res => res.json())
+                            .then(data => !data.existe);
                     },
-                    errorMessage: '⚠️ El nombre de usuario ya está en uso'
+                    errorMessage: '⚠️ Este usuario ya está en uso'
                 }
-            ])
+            ], { errorsContainer: '#err-user' }) // Enviamos el error a la caja física
+            
             .addField('#reg_phone', [
                 { rule: 'required', errorMessage: 'Completa este campo' },
                 { rule: 'customRegexp', value: /^[0-9]+$/, errorMessage: 'Usa solo números ⚠️' },
                 {
-                    // AJAX: Validar Teléfono en tiempo real
-                    validator: async (value) => {
+                    validator: (value) => {
                         if (!value) return true;
-                        const response = await fetch(`http://localhost:5000/api/verificar-telefono?telefono=${value}`);
-                        const data = await response.json();
-                        return !data.existe; // Devuelve true si NO existe
+                        return fetch(`http://localhost:5000/api/verificar-telefono?telefono=${value}&t=${Date.now()}`)
+                            .then(res => res.json())
+                            .then(data => !data.existe);
                     },
-                    errorMessage: '⚠️ Este número de teléfono ya está registrado'
+                    errorMessage: '⚠️ Este número ya está registrado'
                 }
-            ])
+            ], { errorsContainer: '#err-phone' })
+            
             .addField('#reg_email', [
                 { rule: 'required', errorMessage: 'Completa este campo' },
                 { rule: 'customRegexp', value: /^[a-zA-Z0-9._%+-]+@gmail\.com$/, errorMessage: 'Usa @gmail.com' },
                 {
-                    // AJAX: Validar Correo Electrónico en tiempo real
-                    validator: async (value) => {
+                    validator: (value) => {
                         if (!value) return true;
-                        const response = await fetch(`http://localhost:5000/api/verificar-email?email=${value}`);
-                        const data = await response.json();
-                        return !data.existe; // Devuelve true si NO existe
+                        return fetch(`http://localhost:5000/api/verificar-email?email=${value}&t=${Date.now()}`)
+                            .then(res => res.json())
+                            .then(data => !data.existe);
                     },
                     errorMessage: '⚠️ Este correo ya está registrado'
                 }
-            ])
+            ], { errorsContainer: '#err-email' })
+            
             .addField('#reg_email_confirm', [
                 { rule: 'required', errorMessage: 'Completa este campo' },
                 { 
                     validator: (value, fields) => value === fields['#reg_email'].elem.value, 
                     errorMessage: 'Los correos no coinciden' 
                 }
-            ])
+            ], { errorsContainer: '#err-email-conf' })
+            
             .addField('#reg_pass', [
                 { rule: 'required', errorMessage: 'Completa este campo' },
                 { rule: 'minLength', value: 10, errorMessage: 'Mínimo 10 caracteres' }
-            ])
+            ], { errorsContainer: '#err-pass' })
+            
             .addField('#reg_pass_confirm', [
                 { rule: 'required', errorMessage: 'Completa este campo' },
                 { 
                     validator: (value, fields) => value === fields['#reg_pass'].elem.value, 
                     errorMessage: 'Las contraseñas no coinciden' 
                 }
-            ])
+            ], { errorsContainer: '#err-pass-conf' })
+            
             .onSuccess(async (event) => {
                 event.preventDefault();
                 
-                // Recolección final de datos
                 const datosUsuario = {
                     usuario: document.getElementById('reg_user').value,
                     telefono: document.getElementById('reg_phone').value,
@@ -282,11 +279,9 @@ setTimeout(() => {
                     
                     if (response.ok) {
                         alert(data.mensaje);
-                        // Limpia el formulario y recarga la página
                         document.getElementById('register-form').reset();
                         location.reload(); 
                     } else {
-                        // Aquí se atrapa el error si el backend bloqueó el registro
                         alert('Error: ' + data.error);
                     }
                 } catch (error) {

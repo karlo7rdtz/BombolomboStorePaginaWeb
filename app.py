@@ -104,9 +104,10 @@ def verificar_usuario():
         return jsonify({"existe": False}), 400
 
     conn = get_db_connection()
+    if conn is None: return jsonify({"error": "Base de datos desconectada."}), 500
     cur = conn.cursor()
     try:
-        cur.execute("SELECT 1 FROM usuarios WHERE nombre_usuario = %s", (usuario_a_revisar,))
+        cur.execute("SELECT 1 FROM usuarios WHERE nombre_usuario ILIKE %s", (usuario_a_revisar,))
         existe = cur.fetchone() is not None
         return jsonify({"existe": existe}), 200
     finally:
@@ -120,6 +121,7 @@ def verificar_telefono():
         return jsonify({"existe": False}), 400
 
     conn = get_db_connection()
+    if conn is None: return jsonify({"error": "Base de datos desconectada."}), 500
     cur = conn.cursor()
     try:
         cur.execute("SELECT 1 FROM usuarios WHERE telefono = %s", (telefono_a_revisar,))
@@ -136,9 +138,10 @@ def verificar_email():
         return jsonify({"existe": False}), 400
 
     conn = get_db_connection()
+    if conn is None: return jsonify({"error": "Base de datos desconectada."}), 500
     cur = conn.cursor()
     try:
-        cur.execute("SELECT 1 FROM usuarios WHERE correo_electronico = %s", (email_a_revisar,))
+        cur.execute("SELECT 1 FROM usuarios WHERE correo_electronico ILIKE %s", (email_a_revisar,))
         existe = cur.fetchone() is not None
         return jsonify({"existe": existe}), 200
     finally:
