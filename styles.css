@@ -396,6 +396,7 @@ html, body {
     flex: 1;
 }
 
+/* BORRA ESTO: */
 footer {
     margin-top: auto !important;
     footer {
@@ -403,6 +404,13 @@ footer {
     bottom: 0;
     width: 100%;
 }
+}
+
+footer {
+    margin-top: auto !important;
+    position: relative;
+    bottom: 0;
+    width: 100%;
 }
 
 .link-verde {
