@@ -4,8 +4,10 @@ import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+# Permitir que el frontend se comunique con el backend
 CORS(app)
 
+# Configuración de la base de datos Neon
 DATABASE_URL = "postgresql://neondb_owner:npg_oQ4BrhMS9WEi@ep-icy-bonus-ap3ijfeu-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
 def get_db_connection():
@@ -16,6 +18,7 @@ def get_db_connection():
         print(f"Error de conexión a Neon: {e}")
         return None
 
+# --- RUTA DE REGISTRO CON BLOQUEO DE DUPLICADOS ---
 @app.route('/api/registro', methods=['POST'])
 def registro():
     data = request.json
@@ -24,14 +27,31 @@ def registro():
     correo = data.get('correo')
     contrasena = data.get('contrasena')
 
-    hashed_password = generate_password_hash(contrasena)
-
     conn = get_db_connection()
     if conn is None:
         return jsonify({"error": "Base de datos desconectada."}), 500
     
     cur = conn.cursor()
     try:
+        # Verificar si alguno de los datos ya existe antes de insertar
+        cur.execute("""
+            SELECT nombre_usuario, correo_electronico, telefono 
+            FROM usuarios 
+            WHERE nombre_usuario = %s OR correo_electronico = %s OR telefono = %s
+        """, (usuario, correo, telefono))
+        
+        duplicado = cur.fetchone()
+
+        if duplicado:
+            if duplicado[0] == usuario:
+                return jsonify({"error": "El nombre de usuario ya está en uso."}), 400
+            if duplicado[1] == correo:
+                return jsonify({"error": "El correo ya está registrado."}), 400
+            if duplicado[2] == telefono:
+                return jsonify({"error": "Este número de teléfono ya está registrado."}), 400
+
+        # Si no hay duplicados, cifrar contraseña y guardar
+        hashed_password = generate_password_hash(contrasena)
         cur.execute(
             "INSERT INTO usuarios (nombre_usuario, telefono, correo_electronico, contrasena) VALUES (%s, %s, %s, %s)",
             (usuario, telefono, correo, hashed_password)
@@ -45,6 +65,7 @@ def registro():
         cur.close()
         conn.close()
 
+# --- RUTA DE LOGIN ---
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.json
@@ -57,7 +78,6 @@ def login():
     
     cur = conn.cursor()
     try:
-
         cur.execute("SELECT nombre_usuario, contrasena, rol FROM usuarios WHERE correo_electronico = %s", (correo,))
         usuario = cur.fetchone()
 
@@ -65,7 +85,7 @@ def login():
             return jsonify({
                 "mensaje": f"¡Bienvenido, {usuario[0]}!",
                 "rol": usuario[2],
-                "nombre": usuario[0]  # <-- AGREGAMOS ESTA LÍNEA
+                "nombre": usuario[0]
             }), 200
         else:
             return jsonify({"error": "Correo o contraseña incorrectos."}), 401
@@ -75,31 +95,55 @@ def login():
         cur.close()
         conn.close()
 
+# --- RUTAS DE VERIFICACIÓN AJAX (USADAS POR JUSTVALIDATE) ---
+
+@app.route('/api/verificar-usuario', methods=['GET'])
+def verificar_usuario():
+    usuario_a_revisar = request.args.get('usuario')
+    if not usuario_a_revisar:
+        return jsonify({"existe": False}), 400
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT 1 FROM usuarios WHERE nombre_usuario = %s", (usuario_a_revisar,))
+        existe = cur.fetchone() is not None
+        return jsonify({"existe": existe}), 200
+    finally:
+        cur.close()
+        conn.close()
+
+@app.route('/api/verificar-telefono', methods=['GET'])
+def verificar_telefono():
+    telefono_a_revisar = request.args.get('telefono')
+    if not telefono_a_revisar:
+        return jsonify({"existe": False}), 400
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT 1 FROM usuarios WHERE telefono = %s", (telefono_a_revisar,))
+        existe = cur.fetchone() is not None
+        return jsonify({"existe": existe}), 200
+    finally:
+        cur.close()
+        conn.close()
+
 @app.route('/api/verificar-email', methods=['GET'])
 def verificar_email():
     email_a_revisar = request.args.get('email')
-    
     if not email_a_revisar:
         return jsonify({"existe": False}), 400
 
     conn = get_db_connection()
-    if conn is None:
-        return jsonify({"error": "Base de datos desconectada."}), 500
-    
     cur = conn.cursor()
     try:
-
         cur.execute("SELECT 1 FROM usuarios WHERE correo_electronico = %s", (email_a_revisar,))
         existe = cur.fetchone() is not None
-        
         return jsonify({"existe": existe}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
     finally:
         cur.close()
         conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-
-    

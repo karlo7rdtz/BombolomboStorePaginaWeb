@@ -1,3 +1,4 @@
+// 1. Función para mostrar/ocultar contraseña
 function togglePass(id, el) {
     const input = document.getElementById(id);
     if (input) {
@@ -11,12 +12,12 @@ function togglePass(id, el) {
     }
 }
 
+// 2. Configuración Principal de Vue.js
 const { createApp } = Vue;
 
 const app = createApp({
     data() {
         return {
-        
             mostrarLogin: true,
             usuarioLogueado: false,
             nombreUsuario: '',
@@ -47,7 +48,7 @@ const app = createApp({
                 this.usuarioLogueado = true;
                 this.nombreUsuario = nombre;
                 this.usuarioRol = rol;
-                this.mostrarLogin = false;
+                this.mostrarLogin = false; // Oculta el login si ya hay sesión
             }
         }
     },
@@ -58,6 +59,7 @@ const app = createApp({
             setInterval(() => this.siguienteImagen(), 3000);
         }
 
+        // Inyección dinámica para las otras páginas
         this.$nextTick(() => {
             const contenedorAcerca = document.getElementById('seccion-acerca');
             if (contenedorAcerca) {
@@ -90,6 +92,7 @@ const app = createApp({
     }
 });
 
+// Componente Global: Footer
 app.component('app-footer', {
     template: `
     <footer class="bg-custom-dark text-white text-center py-4 mt-auto">
@@ -108,8 +111,10 @@ app.component('app-footer', {
     </footer>`
 });
 
+// Montamos la aplicación Vue
 app.mount('#app');
 
+// 3. Lógica de Iniciar Sesión
 document.addEventListener('submit', async (e) => {
     if (e.target && e.target.id === 'login-form') {
         e.preventDefault();
@@ -125,6 +130,7 @@ document.addEventListener('submit', async (e) => {
                 body: JSON.stringify(datosLogin)
             });
             const data = await res.json();
+            
             if (res.ok) {
                 localStorage.setItem('rolUsuario', data.rol);
                 localStorage.setItem('nombreUsuario', data.nombre);
@@ -138,32 +144,106 @@ document.addEventListener('submit', async (e) => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const inputEmail = document.getElementById('reg_email');
-    if (inputEmail) {
-        let timeout = null;
-        inputEmail.addEventListener('input', function () {
-            const email = this.value;
-            const feedback = document.getElementById('email-feedback');
-            clearTimeout(timeout);
-            if (email === "") {
-                feedback.style.display = 'none';
-                return;
-            }
-            timeout = setTimeout(async () => {
-                try {
-                    const response = await fetch(`http://127.0.0.1:5000/api/verificar-email?email=${email}`);
-                    const data = await response.json();
-                    if (data.existe) {
-                        feedback.textContent = "⚠️ Este correo ya está en uso";
-                        feedback.style.display = 'block';
-                        inputEmail.style.borderColor = '#ff4d4d';
-                    } else {
-                        feedback.style.display = 'none';
-                        inputEmail.style.borderColor = '#04AA6D';
-                    }
-                } catch (error) { console.error(error); }
-            }, 500);
+// 4. Lógica de Registro (JustValidate + AJAX Completo)
+setTimeout(() => {
+    const regForm = document.getElementById('register-form');
+    
+    if (regForm) {
+        const validation = new window.JustValidate('#register-form', {
+            errorFieldCssClass: 'is-invalid'
         });
+
+        validation
+            .addField('#reg_user', [
+                { rule: 'required', errorMessage: 'Completa este campo' },
+                {
+                    // AJAX: Validar Nombre de Usuario en tiempo real
+                    validator: async (value) => {
+                        if (!value) return true;
+                        const response = await fetch(`http://localhost:5000/api/verificar-usuario?usuario=${value}`);
+                        const data = await response.json();
+                        return !data.existe; // Devuelve true si NO existe
+                    },
+                    errorMessage: '⚠️ El nombre de usuario ya está en uso'
+                }
+            ])
+            .addField('#reg_phone', [
+                { rule: 'required', errorMessage: 'Completa este campo' },
+                { rule: 'customRegexp', value: /^[0-9]+$/, errorMessage: 'Usa solo números ⚠️' },
+                {
+                    // AJAX: Validar Teléfono en tiempo real
+                    validator: async (value) => {
+                        if (!value) return true;
+                        const response = await fetch(`http://localhost:5000/api/verificar-telefono?telefono=${value}`);
+                        const data = await response.json();
+                        return !data.existe; // Devuelve true si NO existe
+                    },
+                    errorMessage: '⚠️ Este número de teléfono ya está registrado'
+                }
+            ])
+            .addField('#reg_email', [
+                { rule: 'required', errorMessage: 'Completa este campo' },
+                { rule: 'customRegexp', value: /^[a-zA-Z0-9._%+-]+@gmail\.com$/, errorMessage: 'Usa @gmail.com' },
+                {
+                    // AJAX: Validar Correo Electrónico en tiempo real
+                    validator: async (value) => {
+                        if (!value) return true;
+                        const response = await fetch(`http://localhost:5000/api/verificar-email?email=${value}`);
+                        const data = await response.json();
+                        return !data.existe; // Devuelve true si NO existe
+                    },
+                    errorMessage: '⚠️ Este correo ya está registrado'
+                }
+            ])
+            .addField('#reg_email_confirm', [
+                { rule: 'required', errorMessage: 'Completa este campo' },
+                { 
+                    validator: (value, fields) => value === fields['#reg_email'].elem.value, 
+                    errorMessage: 'Los correos no coinciden' 
+                }
+            ])
+            .addField('#reg_pass', [
+                { rule: 'required', errorMessage: 'Completa este campo' },
+                { rule: 'minLength', value: 10, errorMessage: 'Mínimo 10 caracteres' }
+            ])
+            .addField('#reg_pass_confirm', [
+                { rule: 'required', errorMessage: 'Completa este campo' },
+                { 
+                    validator: (value, fields) => value === fields['#reg_pass'].elem.value, 
+                    errorMessage: 'Las contraseñas no coinciden' 
+                }
+            ])
+            .onSuccess(async (event) => {
+                event.preventDefault();
+                
+                // Recolección final de datos
+                const datosUsuario = {
+                    usuario: document.getElementById('reg_user').value,
+                    telefono: document.getElementById('reg_phone').value,
+                    correo: document.getElementById('reg_email').value,
+                    contrasena: document.getElementById('reg_pass').value
+                };
+
+                try {
+                    const response = await fetch('http://localhost:5000/api/registro', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(datosUsuario)
+                    });
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        alert(data.mensaje);
+                        // Limpia el formulario y recarga la página
+                        document.getElementById('register-form').reset();
+                        location.reload(); 
+                    } else {
+                        // Aquí se atrapa el error si el backend bloqueó el registro
+                        alert('Error: ' + data.error);
+                    }
+                } catch (error) {
+                    alert('Error de conexión con el servidor.');
+                }
+            });
     }
-});
+}, 500);

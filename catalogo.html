@@ -22,12 +22,16 @@
                     <a class="nav-link" href="index.html">Inicio</a>
                     <a class="nav-link" href="mision.html">Misión</a>
                     <a class="nav-link" href="vision.html">Visión</a>
-                    <a class="nav-link active" href="catalogo.html">Catálogo</a>
-                     <a class="nav-link admin-link ms-lg-auto" href="adminInventario.html">Administrador de Inventario</a>
-                    <a class="nav-link ms-lg-auto" href="cuenta.html" id="link-cuenta">Cuenta</a>
+                    <a class="nav-link" href="catalogo.html">Catálogo</a>
 
-                    <span class="nav-link text-white d-none ms-lg-auto" id="user-greeting" style="font-weight: bold; color: #04AA6D !important;"></span>
-                    <button class="btn btn-outline-danger btn-sm ms-lg-2 d-none" id="btn-logout" onclick="logout()">Cerrar sesión</button>
+                    <a class="nav-link admin-link ms-lg-auto" href="adminInventario.html" v-if="usuarioRol === 'admin'">Administrador de Inventario</a>
+
+                    <a class="nav-link ms-lg-auto" href="cuenta.html" v-if="!usuarioLogueado">Cuenta</a>
+
+                    <template v-if="usuarioLogueado">
+                        <span class="nav-link text-white ms-lg-auto" id="user-greeting" style="font-weight: bold; color: #04AA6D !important;">Hola {{ nombreUsuario }}</span>
+                        <button class="btn btn-outline-danger btn-sm ms-lg-2" @click="logout">Cerrar sesión</button>
+                    </template>
                 </div>
             </div>
         </div>
