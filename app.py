@@ -4,10 +4,8 @@ import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-# Esto es vital: permite que tu Live Server (puerto 5500) hable con Flask (puerto 5000)
 CORS(app)
 
-# Tu enlace exacto de Neon
 DATABASE_URL = "postgresql://neondb_owner:npg_oQ4BrhMS9WEi@ep-icy-bonus-ap3ijfeu-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
 def get_db_connection():
@@ -26,7 +24,6 @@ def registro():
     correo = data.get('correo')
     contrasena = data.get('contrasena')
 
-    # Ciframos la contraseña
     hashed_password = generate_password_hash(contrasena)
 
     conn = get_db_connection()
@@ -51,7 +48,7 @@ def registro():
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.json
-    correo = data.get('user_login') # Usamos el name que tienes en tu HTML
+    correo = data.get('user_login') 
     contrasena = data.get('pass_login')
 
     conn = get_db_connection()
@@ -60,11 +57,10 @@ def login():
     
     cur = conn.cursor()
     try:
-        # Buscamos al usuario por su correo
+
         cur.execute("SELECT nombre_usuario, contrasena, rol FROM usuarios WHERE correo_electronico = %s", (correo,))
         usuario = cur.fetchone()
 
-        # Verificamos que exista y que la contraseña coincida
         if usuario and check_password_hash(usuario[1], contrasena):
             return jsonify({
                 "mensaje": f"¡Bienvenido, {usuario[0]}!",
@@ -79,6 +75,31 @@ def login():
         cur.close()
         conn.close()
 
+@app.route('/api/verificar-email', methods=['GET'])
+def verificar_email():
+    email_a_revisar = request.args.get('email')
+    
+    if not email_a_revisar:
+        return jsonify({"existe": False}), 400
+
+    conn = get_db_connection()
+    if conn is None:
+        return jsonify({"error": "Base de datos desconectada."}), 500
+    
+    cur = conn.cursor()
+    try:
+
+        cur.execute("SELECT 1 FROM usuarios WHERE correo_electronico = %s", (email_a_revisar,))
+        existe = cur.fetchone() is not None
+        
+        return jsonify({"existe": existe}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        conn.close()
+
 if __name__ == '__main__':
-    # Arranca el servidor backend en el puerto 5000
     app.run(debug=True, port=5000)
+
+    

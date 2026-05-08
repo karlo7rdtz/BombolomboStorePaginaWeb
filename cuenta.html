@@ -15,9 +15,7 @@
 
 <body class="catalogo-cuerpo">
 
-<div id="app">
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-custom-dark">
+<div id="app" class="d-flex flex-column min-vh-100"> <nav class="navbar navbar-expand-lg navbar-dark bg-custom-dark">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal">
                 <span class="navbar-toggler-icon"></span>
@@ -29,11 +27,19 @@
                     <a class="nav-link" href="mision.html">Misión</a>
                     <a class="nav-link" href="vision.html">Visión</a>
                     <a class="nav-link" href="catalogo.html">Catálogo</a>
-                    <a class="nav-link admin-link ms-lg-auto" href="adminInventario.html">Administrador de Inventario</a>
-                    <a class="nav-link ms-lg-auto" href="cuenta.html" id="link-cuenta">Cuenta</a>
-
-                    <span class="nav-link text-white d-none" id="user-greeting" style="font-weight: bold; color: #04AA6D !important;"></span>
-                    <button class="btn btn-outline-danger btn-sm ms-lg-2 d-none" id="btn-logout" onclick="logout()">Cerrar sesión</button>
+                    
+                    <a class="nav-link admin-link" href="adminInventario.html" v-if="usuarioRol === 'admin'">
+                        Administrador de Inventario
+                    </a>
+                    
+                    <a class="nav-link" href="cuenta.html" v-if="!usuarioLogueado">Cuenta</a>
+                    
+                    <template v-if="usuarioLogueado">
+                        <span class="nav-link text-success fw-bold">Hola, {{ nombreUsuario }}</span>
+                        <button class="btn btn-outline-danger btn-sm ms-lg-2" @click="logout">
+                            Cerrar sesión
+                        </button>
+                    </template>
                 </div>
             </div>
         </div>
@@ -48,57 +54,67 @@
 
             <div class="row justify-content-center">
                 
-                <div class="col-12 col-md-8 col-lg-6" v-show="mostrarLogin">
-                    <div class="formulario">
-                        <h3 class="text-center">Iniciar Sesión</h3>
-                        <form id="login-form" class="form-container mt-4">
-                            <div class="mb-3">
-                                <input type="email" class="form-control" name="user_login" placeholder="Correo electrónico" required>
+                <template v-if="!usuarioLogueado">
+                    
+                    <div class="col-12 col-md-8 col-lg-6" v-if="mostrarLogin">
+                        <div class="formulario">
+                            <h3 class="text-center">Iniciar Sesión</h3>
+                            <form id="login-form" class="form-container mt-4">
+                                <div class="mb-3">
+                                    <input type="email" class="form-control" name="user_login" placeholder="Correo electrónico" required>
+                                </div>
+                                <div class="mb-3 position-relative">
+                                    <input type="password" class="form-control" id="pass_login" placeholder="Contraseña" required>
+                                    <i class="fa-solid fa-eye position-absolute" style="right: 15px; top: 12px; cursor: pointer; color: #04AA6D;" onclick="togglePass('pass_login', this)"></i>
+                                </div>
+                                <input type="submit" value="Iniciar sesión" class="w-100">
+                            </form>
+                            <div class="text-center mt-4">
+                                <p class="mb-0 text-white">¿Aún no tienes cuenta?</p>
+                                <span class="link-verde" @click="mostrarLogin = false" style="cursor:pointer;">Crear una cuenta ahora</span>
                             </div>
-                            <div class="mb-3 position-relative">
-                                <input type="password" class="form-control" id="pass_login" placeholder="Contraseña" required>
-                                <i class="fa-solid fa-eye position-absolute" style="right: 15px; top: 12px; cursor: pointer; color: #04AA6D;" onclick="togglePass('pass_login', this)"></i>
-                            </div>
-                            <input type="submit" value="Iniciar sesión" class="w-100">
-                        </form>
-                        <div class="text-center mt-4">
-                            <p class="mb-0 text-white">¿Aún no tienes cuenta?</p>
-                            <span class="link-verde" @click="mostrarLogin = false">Crear una cuenta ahora</span>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-12 col-md-8 col-lg-6" v-show="!mostrarLogin">
-                    <div class="formulario">
-                        <h3 class="text-center">Crear Cuenta</h3>
-                        <form id="register-form" class="form-container mt-4">
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="reg_user" placeholder="Nombre de usuario">
+                    <div class="col-12 col-md-8 col-lg-6" v-else>
+                        <div class="formulario">
+                            <h3 class="text-center">Crear Cuenta</h3>
+                            <form id="register-form" class="form-container mt-4">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="reg_user" placeholder="Nombre de usuario">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="reg_phone" placeholder="Número telefónico">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="email" class="form-control" id="reg_email" placeholder="Correo electrónico">
+                                    <div id="email-feedback" class="small mt-1" style="display: none; color: #ff4d4d; font-weight: bold;"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="email" class="form-control" id="reg_email_confirm" placeholder="Repetir correo">
+                                </div>
+                                <div class="mb-3 position-relative">
+                                    <input type="password" class="form-control" id="reg_pass" placeholder="Contraseña">
+                                    <i class="fa-solid fa-eye position-absolute" style="right: 15px; top: 12px; cursor: pointer; color: #04AA6D;" onclick="togglePass('reg_pass', this)"></i>
+                                </div>
+                                <div class="mb-3 position-relative">
+                                    <input type="password" class="form-control" id="reg_pass_confirm" placeholder="Repetir contraseña">
+                                    <i class="fa-solid fa-eye position-absolute" style="right: 15px; top: 12px; cursor: pointer; color: #04AA6D;" onclick="togglePass('reg_pass_confirm', this)"></i>
+                                </div>
+                                <input type="submit" value="Crear cuenta" class="w-100">
+                            </form>
+                            <div class="text-center mt-4">
+                                <p class="mb-0 text-white">¿Ya tienes cuenta?</p>
+                                <span class="link-verde" @click="mostrarLogin = true" style="cursor:pointer;">Volver al Inicio de Sesión</span>
                             </div>
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="reg_phone" placeholder="Número telefónico">
-                            </div>
-                            <div class="mb-3">
-                                <input type="email" class="form-control" id="reg_email" placeholder="Correo electrónico">
-                            </div>
-                            <div class="mb-3">
-                                <input type="email" class="form-control" id="reg_email_confirm" placeholder="Repetir correo">
-                            </div>
-                            <div class="mb-3 position-relative">
-                                <input type="password" class="form-control" id="reg_pass" placeholder="Contraseña">
-                                <i class="fa-solid fa-eye position-absolute" style="right: 15px; top: 12px; cursor: pointer; color: #04AA6D;" onclick="togglePass('reg_pass', this)"></i>
-                            </div>
-                            <div class="mb-3 position-relative">
-                                <input type="password" class="form-control" id="reg_pass_confirm" placeholder="Repetir contraseña">
-                                <i class="fa-solid fa-eye position-absolute" style="right: 15px; top: 12px; cursor: pointer; color: #04AA6D;" onclick="togglePass('reg_pass_confirm', this)"></i>
-                            </div>
-                            <input type="submit" value="Crear cuenta" class="w-100">
-                        </form>
-                        <div class="text-center mt-4">
-                            <p class="mb-0 text-white">¿Ya tienes cuenta?</p>
-                            <span class="link-verde" @click="mostrarLogin = true">Volver al Inicio de Sesión</span>
                         </div>
                     </div>
+                </template>
+
+                <div class="col-12 text-center py-5" v-else>
+                    <h2 class="text-success">¡Bienvenido de nuevo, {{ nombreUsuario }}!</h2>
+                    <p>Ya puedes acceder a todas las funciones de la tienda.</p>
+                    <a href="catalogo.html" class="btn btn-outline-light mt-3">Ir al Catálogo</a>
                 </div>
 
             </div>
