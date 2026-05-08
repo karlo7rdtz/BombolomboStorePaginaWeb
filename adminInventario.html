@@ -33,11 +33,11 @@
                         <a class="nav-link" href="mision.html">Misión</a>
                         <a class="nav-link" href="vision.html">Visión</a>
                         <a class="nav-link" href="catalogo.html">Catálogo</a>
-                        
+
                         <a class="nav-link admin-link ms-lg-auto" href="adminInventario.html" v-if="usuarioRol === 'admin'">Administrador de Inventario</a>
-                        
+
                         <a class="nav-link ms-lg-auto" href="cuenta.html" v-if="!usuarioLogueado">Cuenta</a>
-                        
+
                         <template v-if="usuarioLogueado">
                             <span class="nav-link text-white ms-lg-auto" id="user-greeting" style="font-weight: bold; color: #04AA6D !important;">Hola {{ nombreUsuario }}</span>
                             <button class="btn btn-outline-danger btn-sm ms-lg-2" @click="logout">Cerrar sesión</button>
@@ -74,6 +74,9 @@
                                     <option value="chaqueta">Chamarra</option>
                                     <option value="accesorio">Accesorio</option>
                                 </select>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" id="add-imagen" placeholder="Ruta de imagen (ej: ImgWeb/camisa1.png)" required>
                             </div>
                             <div class="mb-3">
                                 <textarea class="form-control" id="add-descripcion" placeholder="Descripción del producto" rows="3"></textarea>

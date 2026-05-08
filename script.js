@@ -33,7 +33,9 @@ const app = createApp({
                 { id: 3, nombre: 'Gorra 3', imagen: 'IMGWeb/gorra3.png', stock: 7 },
                 { id: 4, nombre: 'Gorra 4', imagen: 'IMGWeb/gorra4.png', stock: 5 }
             ],
-            indiceActual: 0
+            indiceActual: 0,
+
+            productos: [] // Aquí guardaremos la ropa de la base de datos
         }
     },
     computed: {
@@ -77,11 +79,30 @@ const app = createApp({
                 this.usuarioRol = rol;
                 this.mostrarLogin = false;
             }
+        },
+        async cargarProductos() {
+            try {
+                const res = await fetch('http://localhost:5000/api/productos');
+                if (res.ok) {
+                    this.productos = await res.json();
+                }
+            } catch (error) {
+                console.error("Error cargando el catálogo:", error);
+            }
+        },
+        filtrarPor(tipo) {
+            // Filtramos usando tu columna exacta de la base de datos
+            return this.productos.filter(p => p.tipo_prenda === tipo);
         }
     },
     mounted() {
         this.verificarSesion();
+<<<<<<< HEAD
         this.cargarProductos(); // Cargamos los productos de la BD al iniciar
+=======
+        this.cargarProductos(); // <-- Carga los productos apenas entras
+        this.verificarSesion();
+>>>>>>> 291ccb7fbf29f4d4b7c520226fb226ea70292d85
 
         if (this.novedades.length > 0) {
             setInterval(() => this.siguienteImagen(), 3000);
@@ -158,6 +179,36 @@ document.addEventListener('submit', async (e) => {
             }
         } catch (error) {
             alert('No se pudo conectar con el servidor.');
+        }
+    }
+    // NUEVO: Lógica para el formulario de Agregar Producto del Administrador
+    if (e.target && e.target.id === 'form-agregar') {
+        e.preventDefault();
+        
+        const nuevoProducto = {
+            nombre: document.getElementById('add-nombre').value,
+            cantidad_stock: document.getElementById('add-cantidad').value,
+            precio: document.getElementById('add-precio').value,
+            tipo_prenda: document.getElementById('add-tipo').value,
+            descripcion: document.getElementById('add-descripcion').value,
+            imagen_url: document.getElementById('add-imagen').value // Nuevo campo para la ruta
+        };
+
+        try {
+            const res = await fetch('http://localhost:5000/api/productos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(nuevoProducto)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.mensaje);
+                document.getElementById('form-agregar').reset();
+            } else {
+                alert('Error al guardar: ' + data.error);
+            }
+        } catch (error) {
+            alert('Error de conexión con el servidor.');
         }
     }
 });

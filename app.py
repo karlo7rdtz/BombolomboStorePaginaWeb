@@ -145,6 +145,7 @@ def verificar_email():
         cur.close()
         conn.close()
 
+<<<<<<< HEAD
 @app.route('/api/productos', methods=['GET'])
 def listar_productos():
     conn = get_db_connection()
@@ -172,5 +173,44 @@ def listar_productos():
     conn.close()
     return jsonify(lista)
 
+=======
+# --- RUTA PARA OBTENER TODOS LOS PRODUCTOS (Para el Catálogo) ---
+@app.route('/api/productos', methods=['GET'])
+def obtener_productos():
+    conn = get_db_connection()
+    if conn is None: return jsonify({"error": "BD desconectada"}), 500
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT * FROM productos ORDER BY id_producto DESC")
+        columnas = [desc[0] for desc in cur.description]
+        productos = [dict(zip(columnas, fila)) for fila in cur.fetchall()]
+        return jsonify(productos), 200
+    finally:
+        cur.close()
+        conn.close()
+
+# --- RUTA PARA AGREGAR PRODUCTOS (Para el Administrador) ---
+@app.route('/api/productos', methods=['POST'])
+def agregar_producto():
+    data = request.json
+    conn = get_db_connection()
+    if conn is None: return jsonify({"error": "BD desconectada"}), 500
+    cur = conn.cursor()
+    try:
+        cur.execute("""
+            INSERT INTO productos (nombre, descripcion, tipo_prenda, precio, cantidad_stock, imagen_url)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (data['nombre'], data['descripcion'], data['tipo_prenda'], 
+              data['precio'], data['cantidad_stock'], data['imagen_url']))
+        conn.commit()
+        return jsonify({"mensaje": "Producto guardado con éxito en el catálogo"}), 201
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cur.close()
+        conn.close()
+        
+>>>>>>> 291ccb7fbf29f4d4b7c520226fb226ea70292d85
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
