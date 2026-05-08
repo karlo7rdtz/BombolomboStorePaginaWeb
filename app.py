@@ -148,6 +148,35 @@ def verificar_email():
         cur.close()
         conn.close()
 
+
+@app.route('/api/productos', methods=['GET'])
+def listar_productos():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    # Usamos tus nombres de columna exactos
+    cur.execute("""
+        SELECT id_producto, nombre, tipo_prenda, precio, cantidad_stock, imagen_url 
+        FROM productos 
+        ORDER BY tipo_prenda ASC
+    """)
+    rows = cur.fetchall()
+    
+    lista = []
+    for r in rows:
+        lista.append({
+            "id_producto": r[0],
+            "nombre": r[1],
+            "tipo_prenda": r[2],
+            "precio": float(r[3]),
+            "cantidad_stock": r[4],
+            "imagen_url": r[5]
+        })
+    
+    cur.close()
+    conn.close()
+    return jsonify(lista)
+
+
 # --- RUTA PARA OBTENER TODOS LOS PRODUCTOS (Para el Catálogo) ---
 @app.route('/api/productos', methods=['GET'])
 def obtener_productos():
@@ -185,5 +214,6 @@ def agregar_producto():
         cur.close()
         conn.close()
         
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

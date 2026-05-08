@@ -23,6 +23,10 @@ const app = createApp({
             nombreUsuario: '',
             usuarioRol: '',
 
+            // Lista de productos que vendrá de la base de datos
+            productos: [],
+
+            // Carrusel de novedades (puedes seguir usando estos estáticos o traerlos de la BD también)
             novedades: [
                 { id: 1, nombre: 'Gorra 1', imagen: 'IMGWeb/gorra1.png', stock: 10 },
                 { id: 2, nombre: 'Gorra 2', imagen: 'IMGWeb/gorra2.png', stock: 8 },
@@ -30,10 +34,34 @@ const app = createApp({
                 { id: 4, nombre: 'Gorra 4', imagen: 'IMGWeb/gorra4.png', stock: 5 }
             ],
             indiceActual: 0,
-            productos: []
+
+            productos: [] // Aquí guardaremos la ropa de la base de datos
+        }
+    },
+    computed: {
+        // Agrupa automáticamente los productos por 'tipo_prenda' para el catálogo
+        productosAgrupados() {
+            return this.productos.reduce((groups, item) => {
+                const tipo = item.tipo_prenda || 'Otros';
+                if (!groups[tipo]) {
+                    groups[tipo] = [];
+                }
+                groups[tipo].push(item);
+                return groups;
+            }, {});
         }
     },
     methods: {
+        async cargarProductos() {
+            try {
+                const response = await fetch('http://localhost:5000/api/productos');
+                if (response.ok) {
+                    this.productos = await response.json();
+                }
+            } catch (error) {
+                console.error("Error al cargar productos desde la base de datos:", error);
+            }
+        },
         siguienteImagen() {
             this.indiceActual = (this.indiceActual + 1) % this.novedades.length;
         },
@@ -49,7 +77,7 @@ const app = createApp({
                 this.usuarioLogueado = true;
                 this.nombreUsuario = nombre;
                 this.usuarioRol = rol;
-                this.mostrarLogin = false; 
+                this.mostrarLogin = false;
             }
         },
         async cargarProductos() {
@@ -68,39 +96,37 @@ const app = createApp({
     },
     mounted() {
         this.verificarSesion();
-        this.cargarProductos(); 
+
+        this.cargarProductos(); // Cargamos los productos de la BD al iniciar
+
 
         if (this.novedades.length > 0) {
             setInterval(() => this.siguienteImagen(), 3000);
         }
 
+        // Inyección dinámica para las secciones de texto
         this.$nextTick(() => {
-            const contenedorAcerca = document.getElementById('seccion-acerca');
-            if (contenedorAcerca) {
-                contenedorAcerca.innerHTML = `
+            const textos = {
+                'seccion-acerca': `
                     <div class="contenido">
                         <h1>Acerca de nosotros</h1>
                         <h2>Bombolombo Store</h2>
-                        <p>En Bombolombo Store creemos que vestir con estilo no debería ser un lujo. 
-                        Somos una tienda en línea dedicada a ofrecer ropa de excelente calidad a precios accesibles.</p>
+                        <p>En Bombolombo Store creemos que vestir con estilo no debería ser un lujo.</p>
                         <p>Viste con estilo. Viste con confianza. Viste Bombolombo.</p>
-                    </div>`;
-            }
-
-            const contenedorMision = document.getElementById('seccion-mision');
-            if (contenedorMision) {
-                contenedorMision.innerHTML = `
+                    </div>`,
+                'seccion-mision': `
                     <h1 class="mb-4">Misión</h1>
-                    <p class="mb-4" align="center">Ofrecer ropa de buena calidad a precios accesibles, permitiendo que las personas puedan vestir con estilo sin gastar cantidades exageradas.</p>
-                    <a href="index.html" class="text-white fw-bold" style="text-decoration: none; border: 1px solid white; padding: 10px 20px; border-radius: 5px;">Regresar</a>`;
-            }
-
-            const contenedorVision = document.getElementById('seccion-vision');
-            if (contenedorVision) {
-                contenedorVision.innerHTML = `
+                    <p class="mb-4" align="center">Ofrecer ropa de buena calidad a precios accesibles para todos.</p>
+                    <a href="index.html" class="text-white fw-bold" style="text-decoration: none; border: 1px solid white; padding: 10px 20px; border-radius: 5px;">Regresar</a>`,
+                'seccion-vision': `
                     <h1 class="mb-4">Visión</h1>
-                    <p class="mb-4" align="center">Convertirnos en una marca reconocida a nivel mundial, destacando por nuestra calidad y consolidarnos en el mercado de moda urbana.</p>
-                    <a href="index.html" class="text-white fw-bold" style="text-decoration: none; border: 1px solid white; padding: 10px 20px; border-radius: 5px;">Regresar</a>`;
+                    <p class="mb-4" align="center">Convertirnos en una marca reconocida mundialmente en moda urbana.</p>
+                    <a href="index.html" class="text-white fw-bold" style="text-decoration: none; border: 1px solid white; padding: 10px 20px; border-radius: 5px;">Regresar</a>`
+            };
+
+            for (const [id, html] of Object.entries(textos)) {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = html;
             }
         });
     }
@@ -113,12 +139,8 @@ app.component('app-footer', {
             <p class="mb-1">Contacto: bombolombodudas@gmail.com | Horario: 9:00 - 16:00 MX</p>
             <p class="mb-3">© 2026 Bombolombo Store</p>
             <div class="d-flex justify-content-center gap-3">
-                    <a href="https://jigsaw.w3.org/css-validator/check/referer">
-                        <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss" alt="¡CSS Válido!">
-                    </a>
-                    <a href="https://jigsaw.w3.org/css-validator/check/referer">
-                        <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="¡CSS Válido!">
-                    </a>
+                <a href="https://jigsaw.w3.org/css-validator/check/referer"><img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss" alt="¡CSS Válido!"></a>
+                <a href="https://jigsaw.w3.org/css-validator/check/referer"><img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="¡CSS Válido!"></a>
             </div>
         </div>
     </footer>`
@@ -126,7 +148,7 @@ app.component('app-footer', {
 
 app.mount('#app');
 
-// 3. Lógica de Iniciar Sesión y Agregar Producto
+// 3. Lógica de Iniciar Sesión (Fetch)
 document.addEventListener('submit', async (e) => {
     
     if (e.target && e.target.id === 'login-form') {
@@ -187,40 +209,37 @@ document.addEventListener('submit', async (e) => {
     }
 });
 
-// 4. Lógica de Registro (JustValidate + AJAX + CONTENEDORES FIJOS)
+// 4. Lógica de Registro con JustValidate y AJAX
 setTimeout(() => {
     const regForm = document.getElementById('register-form');
-    
     if (regForm) {
-        const validation = new window.JustValidate('#register-form', {
-            validateBeforeSubmitting: true // Permite que valide mientras escribes
-        });
+        const validation = new window.JustValidate('#register-form', { errorFieldCssClass: 'is-invalid' });
 
         validation
             .addField('#reg_user', [
                 { rule: 'required', errorMessage: 'Completa este campo' },
                 {
-                    validator: (value) => {
+                    validator: async (value) => {
                         if (!value) return true;
-                        return fetch(`http://localhost:5000/api/verificar-usuario?usuario=${value}&t=${Date.now()}`)
-                            .then(res => res.json())
-                            .then(data => !data.existe);
+                        const res = await fetch(`http://localhost:5000/api/verificar-usuario?usuario=${value}`);
+                        const data = await res.json();
+                        return !data.existe;
                     },
-                    errorMessage: '⚠️ Este usuario ya está en uso'
+                    errorMessage: '⚠️ Usuario en uso'
                 }
             ], { errorsContainer: '#err-user' }) // Enviamos el error a la caja física
             
             .addField('#reg_phone', [
                 { rule: 'required', errorMessage: 'Completa este campo' },
-                { rule: 'customRegexp', value: /^[0-9]+$/, errorMessage: 'Usa solo números ⚠️' },
+                { rule: 'customRegexp', value: /^[0-9]+$/, errorMessage: 'Solo números ⚠️' },
                 {
-                    validator: (value) => {
+                    validator: async (value) => {
                         if (!value) return true;
-                        return fetch(`http://localhost:5000/api/verificar-telefono?telefono=${value}&t=${Date.now()}`)
-                            .then(res => res.json())
-                            .then(data => !data.existe);
+                        const res = await fetch(`http://localhost:5000/api/verificar-telefono?telefono=${value}`);
+                        const data = await res.json();
+                        return !data.existe;
                     },
-                    errorMessage: '⚠️ Este número ya está registrado'
+                    errorMessage: '⚠️ Teléfono ya registrado'
                 }
             ], { errorsContainer: '#err-phone' })
             
@@ -228,44 +247,23 @@ setTimeout(() => {
                 { rule: 'required', errorMessage: 'Completa este campo' },
                 { rule: 'customRegexp', value: /^[a-zA-Z0-9._%+-]+@gmail\.com$/, errorMessage: 'Usa @gmail.com' },
                 {
-                    validator: (value) => {
+                    validator: async (value) => {
                         if (!value) return true;
-                        return fetch(`http://localhost:5000/api/verificar-email?email=${value}&t=${Date.now()}`)
-                            .then(res => res.json())
-                            .then(data => !data.existe);
+                        const res = await fetch(`http://localhost:5000/api/verificar-email?email=${value}`);
+                        const data = await res.json();
+                        return !data.existe;
                     },
-                    errorMessage: '⚠️ Este correo ya está registrado'
+                    errorMessage: '⚠️ Correo ya registrado'
                 }
-            ], { errorsContainer: '#err-email' })
-            
-            .addField('#reg_email_confirm', [
-                { rule: 'required', errorMessage: 'Completa este campo' },
-                { 
-                    validator: (value, fields) => value === fields['#reg_email'].elem.value, 
-                    errorMessage: 'Los correos no coinciden' 
-                }
-            ], { errorsContainer: '#err-email-conf' })
-            
-            .addField('#reg_pass', [
-                { rule: 'required', errorMessage: 'Completa este campo' },
-                { rule: 'minLength', value: 10, errorMessage: 'Mínimo 10 caracteres' }
-            ], { errorsContainer: '#err-pass' })
-            
-            .addField('#reg_pass_confirm', [
-                { rule: 'required', errorMessage: 'Completa este campo' },
-                { 
-                    validator: (value, fields) => value === fields['#reg_pass'].elem.value, 
-                    errorMessage: 'Las contraseñas no coinciden' 
-                }
-            ], { errorsContainer: '#err-pass-conf' })
-            
+            ])
+            .addField('#reg_email_confirm', [{ rule: 'required' }, { validator: (v, f) => v === f['#reg_email'].elem.value, errorMessage: 'No coincide' }])
+            .addField('#reg_pass', [{ rule: 'required' }, { rule: 'minLength', value: 10 }])
+            .addField('#reg_pass_confirm', [{ rule: 'required' }, { validator: (v, f) => v === f['#reg_pass'].elem.value, errorMessage: 'No coincide' }])
             .onSuccess(async (event) => {
-                event.preventDefault();
-                
                 const datosUsuario = {
-                    usuario: document.getElementById('reg_user').value,
+                    nombre_usuario: document.getElementById('reg_user').value,
                     telefono: document.getElementById('reg_phone').value,
-                    correo: document.getElementById('reg_email').value,
+                    correo_electronico: document.getElementById('reg_email').value,
                     contrasena: document.getElementById('reg_pass').value
                 };
 
@@ -276,16 +274,14 @@ setTimeout(() => {
                         body: JSON.stringify(datosUsuario)
                     });
                     const data = await response.json();
-                    
                     if (response.ok) {
                         alert(data.mensaje);
-                        document.getElementById('register-form').reset();
-                        location.reload(); 
+                        location.reload();
                     } else {
                         alert('Error: ' + data.error);
                     }
                 } catch (error) {
-                    alert('Error de conexión con el servidor.');
+                    alert('Error de conexión.');
                 }
             });
     }
