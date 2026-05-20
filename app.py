@@ -109,6 +109,7 @@ def verificar_usuario():
     usuario_a_revisar = request.args.get('usuario')
     if not usuario_a_revisar: return jsonify({"existe": False}), 400
     conn = get_db_connection()
+    if conn is None: return jsonify({"error": "Base de datos desconectada."}), 500
     cur = conn.cursor()
     try:
         cur.execute("SELECT 1 FROM usuarios WHERE nombre_usuario = %s", (usuario_a_revisar,))
@@ -122,6 +123,7 @@ def verificar_telefono():
     telefono_a_revisar = request.args.get('telefono')
     if not telefono_a_revisar: return jsonify({"existe": False}), 400
     conn = get_db_connection()
+    if conn is None: return jsonify({"error": "Base de datos desconectada."}), 500
     cur = conn.cursor()
     try:
         cur.execute("SELECT 1 FROM usuarios WHERE telefono = %s", (telefono_a_revisar,))
@@ -135,6 +137,7 @@ def verificar_email():
     email_a_revisar = request.args.get('email')
     if not email_a_revisar: return jsonify({"existe": False}), 400
     conn = get_db_connection()
+    if conn is None: return jsonify({"error": "Base de datos desconectada."}), 500
     cur = conn.cursor()
     try:
         cur.execute("SELECT 1 FROM usuarios WHERE correo_electronico = %s", (email_a_revisar,))

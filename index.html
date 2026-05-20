@@ -33,12 +33,8 @@
                     <a class="nav-link ms-lg-auto" href="cuenta.html" v-if="!usuarioLogueado">Cuenta</a>
 
                     <template v-if="usuarioLogueado">
-                        <span class="nav-link text-white ms-lg-auto" style="font-weight: bold; color: #04AA6D !important;">
-                            Hola {{ nombreUsuario }}
-                        </span>
-                        <button class="btn btn-outline-danger btn-sm ms-lg-2" @click="logout">
-                            Cerrar sesión
-                        </button>
+                            <span class="nav-link text-white ms-lg-auto" id="user-greeting" style="font-weight: bold; color: #04AA6D !important;">Hola {{ nombreUsuario }}</span>
+                            <button class="btn btn-outline-danger btn-sm ms-lg-2" @click="logout">Cerrar sesión</button>
                     </template>
                 </div>
             </div>

@@ -60,7 +60,6 @@ body {
     margin-bottom: 20px; 
     letter-spacing: 3px;
     text-transform: uppercase;
-
 }
 
 .carrusel-tarjeta {
@@ -142,12 +141,6 @@ body {
     min-height: 90vh;
     background-size: cover;
     background-position: center;
-}
-.contenedor-central {
-    background-color: rgb(24, 13, 26);
-    border-left: 3px solid silver;
-    border-right: 3px solid silver;
-    flex: 1;
 }
 
 .catalogo-fondo {
@@ -269,22 +262,6 @@ h3 {
     z-index: 10;
 }
 
-.just-validate-error-label {
-    position: relative !important; 
-    display: table !important;     
-    background: white !important;
-    color: #333 !important;
-    padding: 8px 12px !important;
-    border-radius: 6px !important;
-    font-family: Arial, sans-serif !important;
-    font-size: 13px !important;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3) !important;
-    margin-top: 8px !important;
-    z-index: 100;
-    border: 1px solid #ccc !important;
-}
-
-
 .form-control.is-invalid {
     color: white !important; 
 }
@@ -301,7 +278,6 @@ h3 {
     color: white;
 }
 
-
 .contenedor-central h1 {
     font-family: 'Courier New', Courier, monospace;
     font-size: 3.5rem;
@@ -310,7 +286,6 @@ h3 {
     margin-bottom: 30px;
 }
 
-
 .contenedor-central p {
     font-family: 'Courier New', Courier, monospace;
     font-size: 1.2rem;
@@ -318,7 +293,6 @@ h3 {
     max-width: 80%;
     margin-bottom: 40px;
 }
-
 
 .btn-regresar {
     color: white !important;
@@ -336,16 +310,11 @@ h3 {
     color: #04AA6D !important; 
 }
 
-
-.img-lateral-izq, .img-lateral-der {
-    min-height: 80vh;
-    background-size: cover;
-    background-position: center;
-}
-
-
+/* === ESTILOS DE VALIDACIÓN JUSTVALIDATE === */
 .just-validate-error-label {
-    position: absolute;
+    position: absolute !important;
+    top: 100% !important; /* Lo empuja debajo del input */
+    left: 0 !important;
     background: white !important;
     color: #333 !important;
     padding: 8px 12px !important;
@@ -354,8 +323,9 @@ h3 {
     font-size: 13px !important;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3) !important;
     margin-top: 8px !important;
-    z-index: 100;
+    z-index: 100 !important;
     border: 1px solid #ccc !important;
+    white-space: nowrap;
 }
 
 .just-validate-error-label::before {
@@ -378,7 +348,7 @@ h3 {
     background-color: rgba(255, 77, 77, 0.05) !important;
 }
 
-.password-wrapper, .formulario {
+.formulario {
     position: relative; 
     margin-bottom: 25px;
 }
@@ -399,16 +369,6 @@ html, body {
 
 .content-wrapper {
     flex: 1;
-}
-
-/* BORRA ESTO: */
-footer {
-    margin-top: auto !important;
-    footer {
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
 }
 
 footer {

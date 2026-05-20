@@ -123,6 +123,7 @@ app.mount('#app');
 
 // 3. Login y Submit de productos
 document.addEventListener('submit', async (e) => {
+    
     if (e.target && e.target.id === 'login-form') {
         e.preventDefault();
         const datosLogin = {
