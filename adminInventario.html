@@ -10,7 +10,7 @@
     <link rel="icon" type="image/png" href="ImgWeb/LogoBombolomboStorePng.png">
     
     <script>
-        // Si la persona que intenta abrir esto no es admin, lo pateamos al inicio
+        // Protección de ruta: Si no es admin, fuera.
         if (localStorage.getItem('rolUsuario') !== 'admin') {
             window.location.replace('index.html');
         }
@@ -20,7 +20,6 @@
 <body class="catalogo-cuerpo"> 
     
     <div id="app">
-        
         <nav class="navbar navbar-expand-lg navbar-dark bg-custom-dark">
             <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal">
@@ -33,117 +32,103 @@
                         <a class="nav-link" href="mision.html">Misión</a>
                         <a class="nav-link" href="vision.html">Visión</a>
                         <a class="nav-link" href="catalogo.html">Catálogo</a>
-
-                        <a class="nav-link admin-link ms-lg-auto" href="adminInventario.html" v-if="usuarioRol === 'admin'">Administrador de Inventario</a>
-
-                        <a class="nav-link ms-lg-auto" href="cuenta.html" v-if="!usuarioLogueado">Cuenta</a>
-
-                        <template v-if="usuarioLogueado">
-                            <span class="nav-link text-white ms-lg-auto" id="user-greeting" style="font-weight: bold; color: #04AA6D !important;">Hola {{ nombreUsuario }}</span>
-                            <button class="btn btn-outline-danger btn-sm ms-lg-2" @click="logout">Cerrar sesión</button>
-                        </template>
+                        <a class="nav-link admin-link ms-lg-auto active" href="adminInventario.html">Panel Admin</a>
+                        <a class="nav-link" href="index.html" onclick="localStorage.clear()">Cerrar Sesión</a>
                     </div>
                 </div>
             </div>
         </nav>
 
-    <div class="container my-5">
-        <div class="catalogo-contenedor p-4 p-md-5 text-white">
-            
-            <h2 class="text-center mb-5">Administrador de Inventario</h2>
+        <div class="container my-5">
+            <div class="catalogo-contenedor p-4 p-md-5 text-white">
+                <h2 class="text-center mb-5">Gestión de Inventario - Bombolombo Store</h2>
 
-            <div class="row g-4">
-                
-                <div class="col-12 col-lg-4">
-                    <div class="p-4 border rounded bg-dark">
-                        <h3 class="h4 text-center mb-3">Agregar Producto</h3>
-                        <form id="form-agregar">
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="add-nombre" placeholder="Nombre del producto" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="number" class="form-control" id="add-cantidad" placeholder="Cantidad en Stock" min="0" required>
-                            </div>
-                            <div class="mb-3">
-                                <input type="number" step="0.01" class="form-control" id="add-precio" placeholder="Precio ($)" required>
-                            </div>
-                            <div class="mb-3">
-                                <select class="form-select" id="add-tipo" required>
-                                    <option value="" disabled selected>Tipo de prenda</option>
-                                    <option value="camisa">Camisa / Camiseta</option>
-                                    <option value="chaqueta">Chamarra</option>
-                                    <option value="accesorio">Accesorio</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="add-imagen" placeholder="Ruta de imagen (ej: ImgWeb/camisa1.png)" required>
-                            </div>
-                            <div class="mb-3">
-                                <textarea class="form-control" id="add-descripcion" placeholder="Descripción del producto" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn w-100 fw-bold" style="background-color: #04AA6D; color: white;">Guardar en BD</button>
-                        </form>
+                <div class="row g-4">
+                    
+                    <div class="col-12 col-lg-4">
+                        <div class="p-4 border rounded bg-dark h-100 shadow">
+                            <h3 class="h4 text-center mb-3 text-success">Agregar Nuevo</h3>
+                           <form id="form-agregar" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="add-nombre" placeholder="Nombre del producto" required>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="number" class="form-control" id="add-cantidad" placeholder="Cantidad inicial" min="0" required>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="number" step="0.01" class="form-control" id="add-precio" placeholder="Precio ($)" required>
+                                </div>
+                                <div class="mb-3">
+                                    <select class="form-select" id="add-tipo" required>
+                                        <option value="" disabled selected>Tipo de prenda</option>
+                                        <option value="camisa">Camisa / Camiseta</option>
+                                        <option value="zapato">Zapato</option>
+                                        <option value="pantalon">Pantalón</option>
+                                        <option value="chaqueta">Chamarra</option>
+                                        <option value="accesorio">Accesorio / Gorra</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label small text-secondary">Sube o arrastra la foto del producto</label>
+                                    <input type="file" class="form-control bg-dark text-white" id="add-imagen" accept="image/*" required 
+                                    style="border: 2px dashed #04AA6D; padding: 25px 10px; cursor: pointer; text-align: center;">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="add-descripcion" placeholder="Descripción breve" rows="2"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100 fw-bold">Guardar en Base de Datos</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-<div class="col-12 col-lg-4">
-    <div class="p-4 border rounded bg-dark">
-        <h3 class="h4 text-center mb-3">Agregar Producto</h3>
-        <form id="form-agregar">
-            <div class="mb-3">
-                <input type="text" class="form-control" id="add-nombre" placeholder="Nombre del producto" required>
-            </div>
-            <div class="mb-3">
-                <input type="number" class="form-control" id="add-cantidad" placeholder="Cantidad en Stock" min="0" required>
-            </div>
-            <div class="mb-3">
-                <input type="number" step="0.01" class="form-control" id="add-precio" placeholder="Precio ($)" required>
-            </div>
-            <div class="mb-3">
-                <select class="form-select" id="add-tipo" required>
-                    <option value="" disabled selected>Tipo de prenda</option>
-                    <option value="camisa">Camisa / Camiseta</option>
-                    <option value="chaqueta">Chamarra</option>
-                    <option value="accesorio">Accesorio</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <textarea class="form-control" id="add-descripcion" placeholder="Descripción" rows="3"></textarea>
-            </div>
-            <button type="submit" class="btn btn-guardar w-100 fw-bold">Guardar en BD</button>
-        </form>
-    </div>
-</div>
 
-<div class="col-12 col-lg-4">
-    <div class="p-4 border rounded bg-dark">
-        <h3 class="h4 text-center mb-3">Actualizar Stock</h3>
-        <form id="form-actualizar">
-            <div class="mb-3">
-                <input type="number" class="form-control" id="upd-id" placeholder="ID del Producto" required>
-            </div>
-            <div class="mb-3">
-                <input type="number" class="form-control" id="upd-cantidad" placeholder="Nueva Cantidad" required>
-            </div>
-            <div class="mb-3">
-                <textarea class="form-control" id="upd-descripcion" placeholder="Nueva descripción" rows="3"></textarea>
-            </div>
-            <button type="submit" class="btn btn-actualizar w-100 fw-bold">Actualizar en BD</button>
-        </form>
-    </div>
-</div>
+                    <div class="col-12 col-lg-4">
+                        <div class="p-4 border rounded bg-dark h-100 shadow">
+                            <h3 class="h4 text-center mb-3 text-warning">Actualizar Stock</h3>
+                            <form id="form-actualizar">
+                                <div class="mb-3">
+                                    <label class="form-label small">ID del Producto</label>
+                                    <input type="number" class="form-control" id="upd-id" placeholder="Ej: 15" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small">Nueva Cantidad</label>
+                                    <input type="number" class="form-control" id="upd-cantidad" placeholder="Stock actualizado" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small">Nueva Descripción</label>
+                                    <textarea class="form-control" id="upd-descripcion" placeholder="Cambiar detalles..." rows="3"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-warning w-100 fw-bold text-dark">Modificar Registro</button>
+                            </form>
+                        </div>
+                    </div>
 
-                </div>
-            </div>
-        </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="p-4 border rounded bg-dark h-100 shadow border-danger">
+                            <h3 class="h4 text-center mb-3 text-danger">Zona de Peligro</h3>
+                            <form id="form-eliminar">
+                                <p class="text-center text-secondary small">Introduce el ID del producto que deseas borrar permanentemente.</p>
+                                <div class="mb-4">
+                                    <input type="number" class="form-control border-danger" id="del-id" placeholder="ID del Producto" required>
+                                </div>
+                                <button type="submit" class="btn btn-danger w-100 fw-bold">Eliminar Definitivamente</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div> </div> </div>
+    </div>
 
     <footer class="bg-custom-dark text-white text-center py-4">
         <div class="container">
-            <p class="mb-1">© 2026 Bombolombo Store</p>
+            <p class="mb-0">© 2026 Bombolombo Store | Panel de Administración</p>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script src="admin.js"></script>
+    
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="script.js?v=8"></script>
 </body>
 </html>

@@ -3,12 +3,22 @@ from flask_cors import CORS
 import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# IMPORTACIONES NUEVAS PARA LAS IMÁGENES
+import os 
+from werkzeug.utils import secure_filename 
+
 app = Flask(__name__)
 # Permitir que el frontend se comunique con el backend
 CORS(app)
 
 # Configuración de la base de datos Neon
 DATABASE_URL = "postgresql://neondb_owner:npg_oQ4BrhMS9WEi@ep-icy-bonus-ap3ijfeu-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
+
+# --- NUEVO: CREACIÓN DE CARPETA DE FOTOS ---
+UPLOAD_FOLDER = 'ImgWeb'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def get_db_connection():
     try:
@@ -33,7 +43,6 @@ def registro():
     
     cur = conn.cursor()
     try:
-        # Verificar si alguno de los datos ya existe antes de insertar
         cur.execute("""
             SELECT nombre_usuario, correo_electronico, telefono 
             FROM usuarios 
@@ -50,7 +59,6 @@ def registro():
             if duplicado[2] == telefono:
                 return jsonify({"error": "Este número de teléfono ya está registrado."}), 400
 
-        # Si no hay duplicados, cifrar contraseña y guardar
         hashed_password = generate_password_hash(contrasena)
         cur.execute(
             "INSERT INTO usuarios (nombre_usuario, telefono, correo_electronico, contrasena) VALUES (%s, %s, %s, %s)",
@@ -95,20 +103,16 @@ def login():
         cur.close()
         conn.close()
 
-# --- RUTAS DE VERIFICACIÓN AJAX (USADAS POR JUSTVALIDATE) ---
-
+# --- RUTAS DE VERIFICACIÓN AJAX ---
 @app.route('/api/verificar-usuario', methods=['GET'])
 def verificar_usuario():
     usuario_a_revisar = request.args.get('usuario')
-    if not usuario_a_revisar:
-        return jsonify({"existe": False}), 400
-
+    if not usuario_a_revisar: return jsonify({"existe": False}), 400
     conn = get_db_connection()
     cur = conn.cursor()
     try:
         cur.execute("SELECT 1 FROM usuarios WHERE nombre_usuario = %s", (usuario_a_revisar,))
-        existe = cur.fetchone() is not None
-        return jsonify({"existe": existe}), 200
+        return jsonify({"existe": cur.fetchone() is not None}), 200
     finally:
         cur.close()
         conn.close()
@@ -116,15 +120,12 @@ def verificar_usuario():
 @app.route('/api/verificar-telefono', methods=['GET'])
 def verificar_telefono():
     telefono_a_revisar = request.args.get('telefono')
-    if not telefono_a_revisar:
-        return jsonify({"existe": False}), 400
-
+    if not telefono_a_revisar: return jsonify({"existe": False}), 400
     conn = get_db_connection()
     cur = conn.cursor()
     try:
         cur.execute("SELECT 1 FROM usuarios WHERE telefono = %s", (telefono_a_revisar,))
-        existe = cur.fetchone() is not None
-        return jsonify({"existe": existe}), 200
+        return jsonify({"existe": cur.fetchone() is not None}), 200
     finally:
         cur.close()
         conn.close()
@@ -132,29 +133,25 @@ def verificar_telefono():
 @app.route('/api/verificar-email', methods=['GET'])
 def verificar_email():
     email_a_revisar = request.args.get('email')
-    if not email_a_revisar:
-        return jsonify({"existe": False}), 400
-
+    if not email_a_revisar: return jsonify({"existe": False}), 400
     conn = get_db_connection()
     cur = conn.cursor()
     try:
         cur.execute("SELECT 1 FROM usuarios WHERE correo_electronico = %s", (email_a_revisar,))
-        existe = cur.fetchone() is not None
-        return jsonify({"existe": existe}), 200
+        return jsonify({"existe": cur.fetchone() is not None}), 200
     finally:
         cur.close()
         conn.close()
 
-
+# --- RUTAS DE PRODUCTOS ---
 @app.route('/api/productos', methods=['GET'])
 def listar_productos():
     conn = get_db_connection()
     cur = conn.cursor()
-    # Usamos tus nombres de columna exactos
     cur.execute("""
-        SELECT id_producto, nombre, tipo_prenda, precio, cantidad_stock, imagen_url 
+        SELECT id_producto, nombre, tipo_prenda, precio, cantidad_stock, imagen_url, descripcion 
         FROM productos 
-        ORDER BY tipo_prenda ASC
+        ORDER BY id_producto DESC
     """)
     rows = cur.fetchall()
     
@@ -166,51 +163,99 @@ def listar_productos():
             "tipo_prenda": r[2],
             "precio": float(r[3]),
             "cantidad_stock": r[4],
-            "imagen_url": r[5]
+            "imagen_url": r[5],
+            "descripcion": r[6]
         })
-    
     cur.close()
     conn.close()
     return jsonify(lista)
 
-
-# --- RUTA PARA OBTENER TODOS LOS PRODUCTOS (Para el Catálogo) ---
-@app.route('/api/productos', methods=['GET'])
-def obtener_productos():
-    conn = get_db_connection()
-    if conn is None: return jsonify({"error": "BD desconectada"}), 500
-    cur = conn.cursor()
-    try:
-        cur.execute("SELECT * FROM productos ORDER BY id_producto DESC")
-        columnas = [desc[0] for desc in cur.description]
-        productos = [dict(zip(columnas, fila)) for fila in cur.fetchall()]
-        return jsonify(productos), 200
-    finally:
-        cur.close()
-        conn.close()
-
-# --- RUTA PARA AGREGAR PRODUCTOS (Para el Administrador) ---
 @app.route('/api/productos', methods=['POST'])
 def agregar_producto():
-    data = request.json
+    nombre = request.form.get('nombre')
+    cantidad_stock = request.form.get('cantidad_stock')
+    precio = request.form.get('precio')
+    tipo_prenda = request.form.get('tipo_prenda')
+    descripcion = request.form.get('descripcion')
+    
+    if 'imagen' not in request.files:
+        return jsonify({"error": "No se seleccionó ninguna imagen."}), 400
+        
+    file = request.files['imagen']
+    if file.filename == '':
+        return jsonify({"error": "El archivo de imagen está vacío."}), 400
+
+    if file:
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        imagen_url = f"ImgWeb/{filename}"
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                INSERT INTO productos (nombre, cantidad_stock, precio, tipo_prenda, imagen_url, descripcion)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (nombre, cantidad_stock, precio, tipo_prenda, imagen_url, descripcion))
+            conn.commit()
+            return jsonify({"mensaje": "¡Producto guardado exitosamente con su imagen!"}), 201
+        except Exception as e:
+            conn.rollback()
+            return jsonify({"error": str(e)}), 400
+        finally:
+            cur.close()
+            conn.close()
+
+@app.route('/api/productos/<int:id>', methods=['PATCH'])
+def actualizar_producto(id):
+    datos = request.get_json()
     conn = get_db_connection()
-    if conn is None: return jsonify({"error": "BD desconectada"}), 500
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE productos 
+        SET cantidad_stock = %s, descripcion = %s 
+        WHERE id_producto = %s
+    """, (datos['cantidad'], datos['descripcion'], id))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({"mensaje": "¡Stock actualizado!"})
+
+# --- RUTA PARA ELIMINAR (CON BORRADO DE IMAGEN FÍSICA) ---
+@app.route('/api/productos/<int:id>', methods=['DELETE'])
+def eliminar_producto(id):
+    conn = get_db_connection()
+    if conn is None: 
+        return jsonify({"error": "Base de datos desconectada"}), 500
+        
     cur = conn.cursor()
     try:
-        cur.execute("""
-            INSERT INTO productos (nombre, descripcion, tipo_prenda, precio, cantidad_stock, imagen_url)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (data['nombre'], data['descripcion'], data['tipo_prenda'], 
-              data['precio'], data['cantidad_stock'], data['imagen_url']))
+        # 1. Buscar el nombre de la imagen antes de borrar el registro
+        cur.execute("SELECT imagen_url FROM productos WHERE id_producto = %s", (id,))
+        producto = cur.fetchone()
+
+        # Si el producto existe y tiene una imagen
+        if producto and producto[0]:
+            imagen_ruta = producto[0]  # Esto será algo como "ImgWeb/foto.png"
+            
+            # 2. Borrar el archivo físico de la computadora si existe
+            if os.path.exists(imagen_ruta):
+                os.remove(imagen_ruta)
+
+        # 3. Ahora sí, borrar el registro de la base de datos Neon
+        cur.execute("DELETE FROM productos WHERE id_producto = %s", (id,))
         conn.commit()
-        return jsonify({"mensaje": "Producto guardado con éxito en el catálogo"}), 201
+        
+        return jsonify({"mensaje": "Producto y su imagen fueron eliminados con éxito"})
+        
     except Exception as e:
         conn.rollback()
         return jsonify({"error": str(e)}), 400
     finally:
         cur.close()
         conn.close()
-        
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
