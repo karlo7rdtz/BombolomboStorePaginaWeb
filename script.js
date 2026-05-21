@@ -12,6 +12,12 @@ function togglePass(id, el) {
     }
 }
 
+// ==========================================
+// CONFIGURACIÓN DE TU NUEVO BACKEND EN AZURE
+// ==========================================
+// Pega aquí la URL completa de tu Azure App Service (debe terminar SIN diagonal "/")
+const AZURE_API_URL = 'https://backendbombolombostore.azurewebsites.net'; 
+
 // 2. Configuración Principal de Vue.js
 const { createApp } = Vue;
 
@@ -24,11 +30,11 @@ const app = createApp({
             usuarioRol: '',
             productos: [],
             novedades: [
-                // ¡AQUÍ ESTÁ LA CORRECCIÓN A ImgWeb!
-                { id: 1, nombre: 'Gorra 1', imagen: 'ImgWeb/gorra1.png', stock: 10 },
-                { id: 2, nombre: 'Gorra 2', imagen: 'ImgWeb/gorra2.png', stock: 8 },
-                { id: 3, nombre: 'Gorra 3', imagen: 'ImgWeb/gorra3.png', stock: 7 },
-                { id: 4, nombre: 'Gorra 4', imagen: 'ImgWeb/gorra4.png', stock: 5 }
+                // Para las imágenes estáticas locales de tu carrusel, agregamos la URL de Azure si se sirven desde allá
+                { id: 1, nombre: 'Gorra 1', imagen: `${AZURE_API_URL}/ImgWeb/gorra1.png`, stock: 10 },
+                { id: 2, nombre: 'Gorra 2', imagen: `${AZURE_API_URL}/ImgWeb/gorra2.png`, stock: 8 },
+                { id: 3, nombre: 'Gorra 3', imagen: `${AZURE_API_URL}/ImgWeb/gorra3.png`, stock: 7 },
+                { id: 4, nombre: 'Gorra 4', imagen: `${AZURE_API_URL}/ImgWeb/gorra4.png`, stock: 5 }
             ],
             indiceActual: 0
         }
@@ -46,12 +52,23 @@ const app = createApp({
     methods: {
         async cargarProductos() {
             try {
-                const response = await fetch('https://bombolombostorepaginaweb-1.onrender.com/api/productos');
+                const response = await fetch(`${AZURE_API_URL}/api/productos`);
                 if (response.ok) {
-                    this.productos = await response.json();
+                    const datosJSON = await response.json();
+                    
+                    // Aseguramos que la URL de la imagen apunte directo al servidor de Azure
+                    this.productos = datosJSON.map(producto => {
+                        return {
+                            ...producto,
+                            // Si la URL guardada ya incluye el dominio no hace nada, si no, le pega la URL de Azure
+                            imagen_url: producto.imagen_url.startsWith('http') 
+                                ? producto.imagen_url 
+                                : `${AZURE_API_URL}/${producto.imagen_url}`
+                        };
+                    });
                 }
             } catch (error) {
-                console.error("Error al cargar productos desde la base de datos:", error);
+                console.error("Error al cargar productos desde Azure:", error);
             }
         },
         siguienteImagen() {
@@ -70,6 +87,7 @@ const app = createApp({
                 this.nombreUsuario = nombre;
                 this.usuarioRol = rol;
                 this.mostrarLogin = false;
+                window.location.href = 'catalogo.html';
             }
         },
         filtrarPor(tipo) {
@@ -133,7 +151,7 @@ document.addEventListener('submit', async (e) => {
         };
 
         try {
-            const res = await fetch('https://bombolombostorepaginaweb-1.onrender.com/api/login', {
+            const res = await fetch(`${AZURE_API_URL}/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datosLogin)
@@ -148,7 +166,7 @@ document.addEventListener('submit', async (e) => {
                 alert('Error: ' + data.error);
             }
         } catch (error) {
-            alert('No se pudo conectar con el servidor.');
+            alert('No se pudo conectar con el servidor de Azure.');
         }
     }
     
@@ -169,7 +187,7 @@ document.addEventListener('submit', async (e) => {
         }
 
         try {
-            const res = await fetch('https://bombolombostorepaginaweb-1.onrender.com/api/productos', {
+            const res = await fetch(`${AZURE_API_URL}/api/productos`, {
                 method: 'POST',
                 body: formData
             });
@@ -177,16 +195,18 @@ document.addEventListener('submit', async (e) => {
             if (res.ok) {
                 alert(data.mensaje);
                 document.getElementById('form-agregar').reset();
+                // Recargar el catálogo dinámicamente si la instancia de Vue está disponible
+                location.reload();
             } else {
-                alert('Error al guardar: ' + data.error);
+                alert('Error al guardar en Azure: ' + data.error);
             }
         } catch (error) {
-            alert('Error de conexión.');
+            alert('Error de conexión con el servidor.');
         }
     }
 });
 
-// 4. Registro AJAX
+// 4. Registro AJAX con JustValidate
 setTimeout(() => {
     const regForm = document.getElementById('register-form');
     if (regForm) {
@@ -196,7 +216,7 @@ setTimeout(() => {
             .addField('#reg_user', [{ rule: 'required' }, {
                 validator: async (value) => {
                     if (!value) return true;
-                    const res = await fetch(`https://bombolombostorepaginaweb-1.onrender.com/api/verificar-usuario?usuario=${value}`);
+                    const res = await fetch(`${AZURE_API_URL}/api/verificar-usuario?usuario=${value}`);
                     const data = await res.json();
                     return !data.existe;
                 }, errorMessage: '⚠️ Usuario en uso'
@@ -204,7 +224,7 @@ setTimeout(() => {
             .addField('#reg_phone', [{ rule: 'required' }, { rule: 'customRegexp', value: /^[0-9]+$/ }, {
                 validator: async (value) => {
                     if (!value) return true;
-                    const res = await fetch(`https://bombolombostorepaginaweb-1.onrender.com/api/verificar-telefono?telefono=${value}`);
+                    const res = await fetch(`${AZURE_API_URL}/api/verificar-telefono?telefono=${value}`);
                     const data = await res.json();
                     return !data.existe;
                 }, errorMessage: '⚠️ Teléfono registrado'
@@ -212,7 +232,7 @@ setTimeout(() => {
             .addField('#reg_email', [{ rule: 'required' }, { rule: 'customRegexp', value: /^[a-zA-Z0-9._%+-]+@gmail\.com$/ }, {
                 validator: async (value) => {
                     if (!value) return true;
-                    const res = await fetch(`https://bombolombostorepaginaweb-1.onrender.com/api/verificar-email?email=${value}`);
+                    const res = await fetch(`${AZURE_API_URL}/api/verificar-email?email=${value}`);
                     const data = await res.json();
                     return !data.existe;
                 }, errorMessage: '⚠️ Correo registrado'
@@ -228,7 +248,7 @@ setTimeout(() => {
                     contrasena: document.getElementById('reg_pass').value
                 };
                 try {
-                    const response = await fetch('https://bombolombostorepaginaweb-1.onrender.com/api/registro', {
+                    const response = await fetch(`${AZURE_API_URL}/api/registro`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(datosUsuario)
@@ -247,13 +267,12 @@ setTimeout(() => {
     }
 }, 500);
 
-// Resto de Admin panel
-const API_URL = 'https://bombolombostorepaginaweb-1.onrender.com/api/productos';
-
+// Panel de Administración (Actualizar y Eliminar)
 const manejarRespuesta = async (res, form) => {
     if (res.ok) {
         alert("Operación realizada con éxito");
         if (form) form.reset();
+        location.reload(); // Recarga para ver cambios reflejados
     } else {
         const errorData = await res.json();
         alert("Error: " + (errorData.error || "Error en el servidor"));
@@ -266,7 +285,7 @@ if (formActualizar) {
         e.preventDefault();
         const id = document.getElementById('upd-id').value;
         try {
-            const res = await fetch(`${API_URL}/${id}`, {
+            const res = await fetch(`${AZURE_API_URL}/api/productos/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -276,7 +295,7 @@ if (formActualizar) {
             });
             manejarRespuesta(res, e.target);
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error al actualizar:", error);
         }
     });
 }
@@ -288,10 +307,10 @@ if (formEliminar) {
         const id = document.getElementById('del-id').value;
         if (!confirm('¿Seguro que quieres borrarlo?')) return;
         try {
-            const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            const res = await fetch(`${AZURE_API_URL}/api/productos/${id}`, { method: 'DELETE' });
             manejarRespuesta(res, e.target);
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error al eliminar:", error);
         }
     });
 }

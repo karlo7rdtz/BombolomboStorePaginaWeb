@@ -1,9 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
-
-# IMPORTACIONES NUEVAS PARA LAS IMÁGENES
 import os 
 from werkzeug.utils import secure_filename 
 
@@ -11,20 +9,19 @@ app = Flask(__name__)
 # Permitir que el frontend se comunique con el backend
 CORS(app)
 
-# Configuración de la base de datos Neon
-DATABASE_URL = "postgresql://neondb_owner:npg_oQ4BrhMS9WEi@ep-icy-bonus-ap3ijfeu-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
+# Configuración de la base de datos Neon (Intenta leerla desde Azure, si no, usa el string por defecto)
+DATABASE_URL = os.environ.get(
+    'DATABASE_URL', 
+    "postgresql://neondb_owner:npg_oQ4BrhMS9WEi@ep-icy-bonus-ap3ijfeu-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
+)
 
-# --- NUEVO: CREACIÓN DE CARPETA DE FOTOS ---
+# --- CONFIGURACIÓN DE CARPETA DE FOTOS OPTIMIZADA PARA LINUX (AZURE) ---
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'ImgWeb')
 
-UPLOAD_FOLDER = 'ImgWeb'
-
-# Bloque seguro para evitar que Vercel se apague
-try:
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
-except OSError:
-    # Si Vercel no nos deja escribir en el disco, lo ignoramos
-    pass
+# Azure nos permite escribir en el disco, creamos la carpeta de forma absoluta y directa
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -35,6 +32,12 @@ def get_db_connection():
     except Exception as e:
         print(f"Error de conexión a Neon: {e}")
         return None
+
+# --- RUTA PARA SERVIR LAS IMÁGENES AL FRONTEND DESDE AZURE ---
+@app.route('/ImgWeb/<filename>', methods=['GET'])
+def web_images(filename):
+    """Permite que el navegador acceda a las imágenes guardadas en el disco de Azure"""
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 # --- RUTA DE REGISTRO CON BLOQUEO DE DUPLICADOS ---
 @app.route('/api/registro', methods=['POST'])
@@ -158,6 +161,7 @@ def verificar_email():
 @app.route('/api/productos', methods=['GET'])
 def listar_productos():
     conn = get_db_connection()
+    if conn is None: return jsonify({"error": "Base de datos desconectada."}), 500
     cur = conn.cursor()
     cur.execute("""
         SELECT id_producto, nombre, tipo_prenda, precio, cantidad_stock, imagen_url, descripcion 
@@ -201,9 +205,11 @@ def agregar_producto():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
         
+        # Guardamos la ruta relativa estándar para la URL del navegador
         imagen_url = f"ImgWeb/{filename}"
 
         conn = get_db_connection()
+        if conn is None: return jsonify({"error": "Base de datos desconectada."}), 500
         cur = conn.cursor()
         try:
             cur.execute("""
@@ -223,6 +229,7 @@ def agregar_producto():
 def actualizar_producto(id):
     datos = request.get_json()
     conn = get_db_connection()
+    if conn is None: return jsonify({"error": "Base de datos desconectada."}), 500
     cur = conn.cursor()
     cur.execute("""
         UPDATE productos 
@@ -247,15 +254,16 @@ def eliminar_producto(id):
         cur.execute("SELECT imagen_url FROM productos WHERE id_producto = %s", (id,))
         producto = cur.fetchone()
 
-        # Si el producto existe y tiene una imagen
         if producto and producto[0]:
-            imagen_ruta = producto[0]  # Esto será algo como "ImgWeb/foto.png"
+            # Extraer el nombre del archivo de la ruta guardada
+            filename = producto[0].split('/')[-1]
+            imagen_ruta = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             
-            # 2. Borrar el archivo físico de la computadora si existe
+            # 2. Borrar el archivo físico del disco de Azure si existe
             if os.path.exists(imagen_ruta):
                 os.remove(imagen_ruta)
 
-        # 3. Ahora sí, borrar el registro de la base de datos Neon
+        # 3. Borrar el registro de la base de datos Neon
         cur.execute("DELETE FROM productos WHERE id_producto = %s", (id,))
         conn.commit()
         
@@ -269,4 +277,5 @@ def eliminar_producto(id):
         conn.close()
 
 if __name__ == '__main__':
+    # Localmente corre en el puerto 5000 con modo debug
     app.run(debug=True, port=5000)

@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/f61f1da7-b635-48c4-9f42-0aa18ed45082/resourceGroups/BackendBombolomboStore_group/providers/Microsoft.Web/sites/BackendBombolomboStore",
+    "appService.deploySubpath": "."
+}
