@@ -205,8 +205,9 @@ html { scroll-behavior: smooth; }
     scroll-snap-align: start; 
 }
 
+/* === AQUÍ ESTÁ LA CORRECCIÓN: ImgWeb/fondo_sesion.png === */
 .cuenta-fondo {
-    background-image: url("IMGweb/fondo_sesion.png");
+    background-image: url("ImgWeb/fondo_sesion.png");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
