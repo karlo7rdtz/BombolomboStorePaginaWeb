@@ -45,7 +45,8 @@ const app = createApp({
     methods: {
         async cargarProductos() {
             try {
-                const response = await fetch('http://localhost:5000/api/productos');
+                // CORRECCIÓN: Ruta relativa para buscar productos en Vercel
+                const response = await fetch('/api/productos');
                 if (response.ok) {
                     this.productos = await response.json();
                 }
@@ -132,7 +133,8 @@ document.addEventListener('submit', async (e) => {
         };
 
         try {
-            const res = await fetch('http://localhost:5000/api/login', {
+            // CORRECCIÓN: Ruta relativa para el login
+            const res = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datosLogin)
@@ -151,12 +153,10 @@ document.addEventListener('submit', async (e) => {
         }
     }
     
-    // Agregar Producto
     // Agregar Producto (Con soporte para subir imágenes)
     if (e.target && e.target.id === 'form-agregar') {
         e.preventDefault();
         
-        // Usamos FormData en lugar de JSON para poder enviar el archivo de la foto
         const formData = new FormData();
         formData.append('nombre', document.getElementById('add-nombre').value);
         formData.append('cantidad_stock', document.getElementById('add-cantidad').value);
@@ -164,17 +164,15 @@ document.addEventListener('submit', async (e) => {
         formData.append('tipo_prenda', document.getElementById('add-tipo').value);
         formData.append('descripcion', document.getElementById('add-descripcion').value);
         
-        // Atrapamos el archivo que el usuario arrastró o seleccionó
         const fileInput = document.getElementById('add-imagen');
         if (fileInput.files.length > 0) {
             formData.append('imagen', fileInput.files[0]);
         }
 
         try {
-            const res = await fetch('http://localhost:5000/api/productos', {
+            // CORRECCIÓN: Ruta relativa para agregar productos
+            const res = await fetch('/api/productos', {
                 method: 'POST',
-                // IMPORTANTE: Al usar FormData, NO se declara el 'Content-Type'
-                // El navegador se encarga de ponerlo automáticamente como 'multipart/form-data'
                 body: formData
             });
             const data = await res.json();
@@ -200,7 +198,8 @@ setTimeout(() => {
             .addField('#reg_user', [{ rule: 'required' }, {
                 validator: async (value) => {
                     if (!value) return true;
-                    const res = await fetch(`http://localhost:5000/api/verificar-usuario?usuario=${value}`);
+                    // CORRECCIÓN: Ruta relativa para verificar usuario
+                    const res = await fetch(`/api/verificar-usuario?usuario=${value}`);
                     const data = await res.json();
                     return !data.existe;
                 }, errorMessage: '⚠️ Usuario en uso'
@@ -208,7 +207,8 @@ setTimeout(() => {
             .addField('#reg_phone', [{ rule: 'required' }, { rule: 'customRegexp', value: /^[0-9]+$/ }, {
                 validator: async (value) => {
                     if (!value) return true;
-                    const res = await fetch(`http://localhost:5000/api/verificar-telefono?telefono=${value}`);
+                    // CORRECCIÓN: Ruta relativa para verificar teléfono
+                    const res = await fetch(`/api/verificar-telefono?telefono=${value}`);
                     const data = await res.json();
                     return !data.existe;
                 }, errorMessage: '⚠️ Teléfono registrado'
@@ -216,7 +216,8 @@ setTimeout(() => {
             .addField('#reg_email', [{ rule: 'required' }, { rule: 'customRegexp', value: /^[a-zA-Z0-9._%+-]+@gmail\.com$/ }, {
                 validator: async (value) => {
                     if (!value) return true;
-                    const res = await fetch(`http://localhost:5000/api/verificar-email?email=${value}`);
+                    // CORRECCIÓN: Ruta relativa para verificar email
+                    const res = await fetch(`/api/verificar-email?email=${value}`);
                     const data = await res.json();
                     return !data.existe;
                 }, errorMessage: '⚠️ Correo registrado'
@@ -232,7 +233,8 @@ setTimeout(() => {
                     contrasena: document.getElementById('reg_pass').value
                 };
                 try {
-                    const response = await fetch('http://localhost:5000/api/registro', {
+                    // CORRECCIÓN: Ruta relativa para procesar el registro
+                    const response = await fetch('/api/registro', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(datosUsuario)
@@ -252,7 +254,9 @@ setTimeout(() => {
 }, 500);
 
 // Resto de Admin panel
-const API_URL = 'http://localhost:5000/api/productos';
+// CORRECCIÓN: El API_URL global ahora usa ruta relativa
+const API_URL = '/api/productos';
+
 const manejarRespuesta = async (res, form) => {
     if (res.ok) {
         alert("Operación realizada con éxito");
