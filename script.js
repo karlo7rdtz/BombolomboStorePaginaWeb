@@ -45,8 +45,8 @@ const app = createApp({
     methods: {
         async cargarProductos() {
             try {
-                // CORRECCIÓN: Ruta relativa para buscar productos en Vercel
-                const response = await fetch('/api/productos');
+                // CONEXIÓN AL BACKEND DE RENDER
+                const response = await fetch('https://bombolombostorepaginaweb.onrender.com/api/productos');
                 if (response.ok) {
                     this.productos = await response.json();
                 }
@@ -133,8 +133,8 @@ document.addEventListener('submit', async (e) => {
         };
 
         try {
-            // CORRECCIÓN: Ruta relativa para el login
-            const res = await fetch('/api/login', {
+            // CONEXIÓN AL BACKEND DE RENDER
+            const res = await fetch('https://bombolombostorepaginaweb.onrender.com/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datosLogin)
@@ -170,8 +170,8 @@ document.addEventListener('submit', async (e) => {
         }
 
         try {
-            // CORRECCIÓN: Ruta relativa para agregar productos
-            const res = await fetch('/api/productos', {
+            // CONEXIÓN AL BACKEND DE RENDER
+            const res = await fetch('https://bombolombostorepaginaweb.onrender.com/api/productos', {
                 method: 'POST',
                 body: formData
             });
@@ -198,8 +198,8 @@ setTimeout(() => {
             .addField('#reg_user', [{ rule: 'required' }, {
                 validator: async (value) => {
                     if (!value) return true;
-                    // CORRECCIÓN: Ruta relativa para verificar usuario
-                    const res = await fetch(`/api/verificar-usuario?usuario=${value}`);
+                    // CONEXIÓN AL BACKEND DE RENDER
+                    const res = await fetch(`https://bombolombostorepaginaweb.onrender.com/api/verificar-usuario?usuario=${value}`);
                     const data = await res.json();
                     return !data.existe;
                 }, errorMessage: '⚠️ Usuario en uso'
@@ -207,8 +207,8 @@ setTimeout(() => {
             .addField('#reg_phone', [{ rule: 'required' }, { rule: 'customRegexp', value: /^[0-9]+$/ }, {
                 validator: async (value) => {
                     if (!value) return true;
-                    // CORRECCIÓN: Ruta relativa para verificar teléfono
-                    const res = await fetch(`/api/verificar-telefono?telefono=${value}`);
+                    // CONEXIÓN AL BACKEND DE RENDER
+                    const res = await fetch(`https://bombolombostorepaginaweb.onrender.com/api/verificar-telefono?telefono=${value}`);
                     const data = await res.json();
                     return !data.existe;
                 }, errorMessage: '⚠️ Teléfono registrado'
@@ -216,8 +216,8 @@ setTimeout(() => {
             .addField('#reg_email', [{ rule: 'required' }, { rule: 'customRegexp', value: /^[a-zA-Z0-9._%+-]+@gmail\.com$/ }, {
                 validator: async (value) => {
                     if (!value) return true;
-                    // CORRECCIÓN: Ruta relativa para verificar email
-                    const res = await fetch(`/api/verificar-email?email=${value}`);
+                    // CONEXIÓN AL BACKEND DE RENDER
+                    const res = await fetch(`https://bombolombostorepaginaweb.onrender.com/api/verificar-email?email=${value}`);
                     const data = await res.json();
                     return !data.existe;
                 }, errorMessage: '⚠️ Correo registrado'
@@ -233,8 +233,8 @@ setTimeout(() => {
                     contrasena: document.getElementById('reg_pass').value
                 };
                 try {
-                    // CORRECCIÓN: Ruta relativa para procesar el registro
-                    const response = await fetch('/api/registro', {
+                    // CONEXIÓN AL BACKEND DE RENDER
+                    const response = await fetch('https://bombolombostorepaginaweb.onrender.com/api/registro', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(datosUsuario)
@@ -254,8 +254,8 @@ setTimeout(() => {
 }, 500);
 
 // Resto de Admin panel
-// CORRECCIÓN: El API_URL global ahora usa ruta relativa
-const API_URL = '/api/productos';
+// CONEXIÓN AL BACKEND DE RENDER
+const API_URL = 'https://bombolombostorepaginaweb.onrender.com/api/productos';
 
 const manejarRespuesta = async (res, form) => {
     if (res.ok) {
