@@ -15,9 +15,17 @@ CORS(app)
 DATABASE_URL = "postgresql://neondb_owner:npg_oQ4BrhMS9WEi@ep-icy-bonus-ap3ijfeu-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
 # --- NUEVO: CREACIÓN DE CARPETA DE FOTOS ---
+
 UPLOAD_FOLDER = 'ImgWeb'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+
+# Bloque seguro para evitar que Vercel se apague
+try:
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+except OSError:
+    # Si Vercel no nos deja escribir en el disco, lo ignoramos
+    pass
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def get_db_connection():
