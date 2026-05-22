@@ -6,7 +6,6 @@ import os
 from werkzeug.utils import secure_filename 
 
 app = Flask(__name__)
-# Permitir que el frontend se comunique con el backend
 CORS(app)
 
 DATABASE_URL = os.environ.get(
@@ -14,11 +13,9 @@ DATABASE_URL = os.environ.get(
     "postgresql://neondb_owner:npg_oQ4BrhMS9WEi@ep-icy-bonus-ap3ijfeu-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
 )
 
-# --- CONFIGURACIÓN DE CARPETA DE FOTOS OPTIMIZADA PARA LINUX (AZURE) ---
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'ImgWeb')
 
-# Azure nos permite escribir en el disco, creamos la carpeta de forma absoluta y directa
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
@@ -32,13 +29,10 @@ def get_db_connection():
         print(f"Error de conexión a Neon: {e}")
         return None
 
-# --- RUTA PARA SERVIR LAS IMÁGENES AL FRONTEND DESDE AZURE ---
 @app.route('/ImgWeb/<filename>', methods=['GET'])
 def web_images(filename):
-    """Permite que el navegador acceda a las imágenes guardadas en el disco de Azure"""
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-# --- RUTA DE REGISTRO CON BLOQUEO DE DUPLICADOS ---
 @app.route('/api/registro', methods=['POST'])
 def registro():
     data = request.json
@@ -83,7 +77,6 @@ def registro():
         cur.close()
         conn.close()
 
-# --- RUTA DE LOGIN ---
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.json
@@ -113,7 +106,6 @@ def login():
         cur.close()
         conn.close()
 
-# --- RUTAS DE VERIFICACIÓN AJAX ---
 @app.route('/api/verificar-usuario', methods=['GET'])
 def verificar_usuario():
     usuario_a_revisar = request.args.get('usuario')
@@ -156,7 +148,6 @@ def verificar_email():
         cur.close()
         conn.close()
 
-# --- RUTAS DE PRODUCTOS ---
 @app.route('/api/productos', methods=['GET'])
 def listar_productos():
     conn = get_db_connection()
@@ -204,7 +195,6 @@ def agregar_producto():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
         
-        # Guardamos la ruta relativa estándar para la URL del navegador
         imagen_url = f"ImgWeb/{filename}"
 
         conn = get_db_connection()
@@ -240,7 +230,6 @@ def actualizar_producto(id):
     conn.close()
     return jsonify({"mensaje": "¡Stock actualizado!"})
 
-# --- RUTA PARA ELIMINAR (CON BORRADO DE IMAGEN FÍSICA) ---
 @app.route('/api/productos/<int:id>', methods=['DELETE'])
 def eliminar_producto(id):
     conn = get_db_connection()
@@ -249,20 +238,16 @@ def eliminar_producto(id):
         
     cur = conn.cursor()
     try:
-        # 1. Buscar el nombre de la imagen antes de borrar el registro
         cur.execute("SELECT imagen_url FROM productos WHERE id_producto = %s", (id,))
         producto = cur.fetchone()
 
         if producto and producto[0]:
-            # Extraer el nombre del archivo de la ruta guardada
             filename = producto[0].split('/')[-1]
             imagen_ruta = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             
-            # 2. Borrar el archivo físico del disco de Azure si existe
             if os.path.exists(imagen_ruta):
                 os.remove(imagen_ruta)
 
-        # 3. Borrar el registro de la base de datos Neon
         cur.execute("DELETE FROM productos WHERE id_producto = %s", (id,))
         conn.commit()
         
@@ -276,5 +261,4 @@ def eliminar_producto(id):
         conn.close()
 
 if __name__ == '__main__':
-    # Localmente corre en el puerto 5000 con modo debug
     app.run(debug=True, port=5000)

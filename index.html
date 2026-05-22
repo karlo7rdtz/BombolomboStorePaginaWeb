@@ -20,7 +20,6 @@
             </button>
 
             <div class="collapse navbar-collapse" id="menuPrincipal">
-                <!-- Enlaces del lado izquierdo -->
                 <div class="navbar-nav me-auto">
                     <a class="nav-link active" href="index.html">Inicio</a>
                     <a class="nav-link" href="mision.html">Misión</a>
@@ -32,16 +31,13 @@
                     </a>
                 </div>
                 
-                <!-- Enlaces y acciones del lado derecho -->
                 <div class="navbar-nav ms-auto">
                     <a class="nav-link" href="cuenta.html" data-v-if="!usuarioLogueado">Cuenta</a>
 
-                    <!-- Reemplazamos <template> por un <div> con data-v-if válido -->
                     <div class="d-contents" data-v-if="usuarioLogueado">
                         <span class="nav-link text-white" id="user-greeting" style="font-weight: bold; color: #04AA6D !important;">
                             Hola {{ nombreUsuario }}
                         </span>
-                        <!-- CORREGIDO: Cambiado @click por data-v-on:click para pasar la validación -->
                         <button class="btn btn-outline-danger btn-sm ms-lg-2" data-v-on:click="logout">Cerrar sesión</button>
                     </div>
                 </div>

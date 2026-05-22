@@ -10,7 +10,6 @@
     <link rel="icon" type="image/png" href="ImgWeb/LogoBombolomboStorePng.png">
     
     <script>
-        // Protección de ruta: Si no es admin, fuera.
         if (localStorage.getItem('rolUsuario') !== 'admin') {
             window.location.replace('index.html');
         }
@@ -41,13 +40,13 @@
 
         <div class="container my-5">
             <div class="catalogo-contenedor p-4 p-md-5 text-white">
-                <h2 class="text-center mb-5">Gestión de Inventario - Bombolombo Store</h2>
+                <h1 class="h2 text-center mb-5">Gestión de Inventario - Bombolombo Store</h1>
 
                 <div class="row g-4">
                     
                     <div class="col-12 col-lg-4">
                         <div class="p-4 border rounded bg-dark h-100 shadow">
-                            <h3 class="h4 text-center mb-3 text-success">Agregar Nuevo</h3>
+                            <h2 class="h4 text-center mb-3 text-success">Agregar Nuevo</h2>
                            <form id="form-agregar" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <input type="text" class="form-control" id="add-nombre" placeholder="Nombre del producto" required>
@@ -85,7 +84,7 @@
 
                     <div class="col-12 col-lg-4">
                         <div class="p-4 border rounded bg-dark h-100 shadow">
-                            <h3 class="h4 text-center mb-3 text-warning">Actualizar Stock</h3>
+                            <h2 class="h4 text-center mb-3 text-warning">Actualizar Stock</h2>
                             <form id="form-actualizar">
                                 <div class="mb-3">
                                     <label class="form-label small">ID del Producto</label>
@@ -106,7 +105,7 @@
 
                     <div class="col-12 col-lg-4">
                         <div class="p-4 border rounded bg-dark h-100 shadow border-danger">
-                            <h3 class="h4 text-center mb-3 text-danger">Zona de Peligro</h3>
+                            <h2 class="h4 text-center mb-3 text-danger">Zona de Peligro</h2>
                             <form id="form-eliminar">
                                 <p class="text-center text-secondary small">Introduce el ID del producto que deseas borrar permanentemente.</p>
                                 <div class="mb-4">
@@ -127,7 +126,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="script.js?v=8"></script>
 </body>

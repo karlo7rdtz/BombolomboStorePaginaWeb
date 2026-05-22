@@ -1,4 +1,3 @@
-// 1. Función para mostrar/ocultar contraseña
 function togglePass(id, el) {
     const input = document.getElementById(id);
     if (input) {
@@ -12,13 +11,8 @@ function togglePass(id, el) {
     }
 }
 
-// ==========================================
-// CONFIGURACIÓN DE TU NUEVO BACKEND EN AZURE
-// ==========================================
-// Pega aquí la URL completa de tu Azure App Service (debe terminar SIN diagonal "/")
 const AZURE_API_URL = 'https://backendbombolombostore.azurewebsites.net'; 
 
-// 2. Configuración Principal de Vue.js
 const { createApp } = Vue;
 
 const app = createApp({
@@ -30,7 +24,6 @@ const app = createApp({
             usuarioRol: '',
             productos: [],
             novedades: [
-                // Para las imágenes estáticas locales de tu carrusel, agregamos la URL de Azure si se sirven desde allá
                 { id: 1, nombre: 'Gorra 1', imagen: `${AZURE_API_URL}/ImgWeb/gorra1.png`, stock: 10 },
                 { id: 2, nombre: 'Gorra 2', imagen: `${AZURE_API_URL}/ImgWeb/gorra2.png`, stock: 8 },
                 { id: 3, nombre: 'Gorra 3', imagen: `${AZURE_API_URL}/ImgWeb/gorra3.png`, stock: 7 },
@@ -56,11 +49,9 @@ const app = createApp({
                 if (response.ok) {
                     const datosJSON = await response.json();
                     
-                    // Aseguramos que la URL de la imagen apunte directo al servidor de Azure
                     this.productos = datosJSON.map(producto => {
                         return {
                             ...producto,
-                            // Si la URL guardada ya incluye el dominio no hace nada, si no, le pega la URL de Azure
                             imagen_url: producto.imagen_url.startsWith('http') 
                                 ? producto.imagen_url 
                                 : `${AZURE_API_URL}/${producto.imagen_url}`
@@ -130,17 +121,31 @@ const app = createApp({
 
 app.component('app-footer', {
     template: `
-    <footer class="bg-custom-dark text-white text-center py-4 mt-auto">
+<footer class="bg-custom-dark text-white text-center py-4 mt-auto">
         <div class="container">
             <p class="mb-1">Contacto: bombolombodudas@gmail.com | Horario: 9:00 - 16:00 MX</p>
             <p class="mb-3">© 2026 Bombolombo Store</p>
+            
+            <div class="d-flex justify-content-center gap-3">
+
+                <a href="https://validator.w3.org/check?uri=referer" target="_blank" rel="noopener">
+                    <img style="border:0; width:88px; height:31px;"
+                         src="https://www.w3.org/Icons/valid-html401"
+                         alt="¡HTML Válido!" />
+                </a>
+
+                <a href="https://jigsaw.w3.org/css-validator/check/referer" target="_blank" rel="noopener">
+                    <img style="border:0; width:88px; height:31px;"
+                         src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+                         alt="¡CSS Válido!" />
+                </a>
+            </div>
         </div>
     </footer>`
 });
 
 app.mount('#app');
 
-// 3. Login y Submit de productos
 document.addEventListener('submit', async (e) => {
     
     if (e.target && e.target.id === 'login-form') {
@@ -170,7 +175,6 @@ document.addEventListener('submit', async (e) => {
         }
     }
     
-    // Agregar Producto
     if (e.target && e.target.id === 'form-agregar') {
         e.preventDefault();
         
@@ -195,7 +199,6 @@ document.addEventListener('submit', async (e) => {
             if (res.ok) {
                 alert(data.mensaje);
                 document.getElementById('form-agregar').reset();
-                // Recargar el catálogo dinámicamente si la instancia de Vue está disponible
                 location.reload();
             } else {
                 alert('Error al guardar en Azure: ' + data.error);
@@ -206,7 +209,6 @@ document.addEventListener('submit', async (e) => {
     }
 });
 
-// 4. Registro AJAX con JustValidate
 setTimeout(() => {
     const regForm = document.getElementById('register-form');
     if (regForm) {
@@ -267,12 +269,11 @@ setTimeout(() => {
     }
 }, 500);
 
-// Panel de Administración (Actualizar y Eliminar)
 const manejarRespuesta = async (res, form) => {
     if (res.ok) {
         alert("Operación realizada con éxito");
         if (form) form.reset();
-        location.reload(); // Recarga para ver cambios reflejados
+        location.reload(); 
     } else {
         const errorData = await res.json();
         alert("Error: " + (errorData.error || "Error en el servidor"));

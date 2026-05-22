@@ -205,7 +205,6 @@ html { scroll-behavior: smooth; }
     scroll-snap-align: start; 
 }
 
-/* === AQUÍ ESTÁ LA CORRECCIÓN: ImgWeb/fondo_sesion.png === */
 .cuenta-fondo {
     background-image: url("ImgWeb/fondo_sesion.png");
     background-size: cover;
@@ -311,10 +310,9 @@ h3 {
     color: #04AA6D !important; 
 }
 
-/* === ESTILOS DE VALIDACIÓN JUSTVALIDATE === */
 .just-validate-error-label {
     position: absolute !important;
-    top: 100% !important; /* Lo empuja debajo del input */
+    top: 100% !important; 
     left: 0 !important;
     background: white !important;
     color: #333 !important;
