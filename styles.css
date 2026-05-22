@@ -397,3 +397,7 @@ footer {
     color: #04AA6D !important;
     cursor: default;
 }
+
+.d-contents {
+    display: contents;
+}

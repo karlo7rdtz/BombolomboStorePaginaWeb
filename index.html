@@ -20,22 +20,30 @@
             </button>
 
             <div class="collapse navbar-collapse" id="menuPrincipal">
-                <div class="navbar-nav w-100">
+                <!-- Enlaces del lado izquierdo -->
+                <div class="navbar-nav me-auto">
                     <a class="nav-link active" href="index.html">Inicio</a>
                     <a class="nav-link" href="mision.html">Misión</a>
                     <a class="nav-link" href="vision.html">Visión</a>
                     <a class="nav-link" href="catalogo.html">Catálogo</a>
                     
-                    <a class="nav-link admin-link ms-lg-auto" href="adminInventario.html" v-if="usuarioRol === 'admin'">
+                    <a class="nav-link admin-link" href="adminInventario.html" data-v-if="usuarioRol === 'admin'">
                         Administrador de Inventario
                     </a>
-                    
-                    <a class="nav-link ms-lg-auto" href="cuenta.html" v-if="!usuarioLogueado">Cuenta</a>
+                </div>
+                
+                <!-- Enlaces y acciones del lado derecho -->
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="cuenta.html" data-v-if="!usuarioLogueado">Cuenta</a>
 
-                    <template v-if="usuarioLogueado">
-                            <span class="nav-link text-white ms-lg-auto" id="user-greeting" style="font-weight: bold; color: #04AA6D !important;">Hola {{ nombreUsuario }}</span>
-                            <button class="btn btn-outline-danger btn-sm ms-lg-2" @click="logout">Cerrar sesión</button>
-                    </template>
+                    <!-- Reemplazamos <template> por un <div> con data-v-if válido -->
+                    <div class="d-contents" data-v-if="usuarioLogueado">
+                        <span class="nav-link text-white" id="user-greeting" style="font-weight: bold; color: #04AA6D !important;">
+                            Hola {{ nombreUsuario }}
+                        </span>
+                        <!-- CORREGIDO: Cambiado @click por data-v-on:click para pasar la validación -->
+                        <button class="btn btn-outline-danger btn-sm ms-lg-2" data-v-on:click="logout">Cerrar sesión</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,7 +56,11 @@
     <h1 class="titulo-novedades">NOVEDADES</h1>
     <div class="carrusel-tarjeta">
         <div class="carrusel-container">
-            <img v-bind:src="novedades[indiceActual].imagen" :alt="novedades[indiceActual].nombre" class="carrusel-img">
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                 alt="Imagen de novedad" 
+                 data-v-bind-src="novedades[indiceActual].imagen" 
+                 data-alt="novedades[indiceActual].nombre" 
+                 class="carrusel-img">
             <div class="text-center mt-2 text-white">
                 <p class="fw-bold">{{ novedades[indiceActual].nombre }}</p>
             </div>
@@ -69,7 +81,9 @@
 
     <app-footer></app-footer>
 
-</div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</div> 
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="script.js"></script>
 </body>

@@ -28,13 +28,13 @@
                     <a class="nav-link" href="vision.html">Visión</a>
                     <a class="nav-link" href="catalogo.html">Catálogo</a>
                     
-                    <a class="nav-link admin-link ms-lg-auto" href="adminInventario.html" v-if="usuarioRol === 'admin'">
+                    <a class="nav-link admin-link ms-lg-auto" href="adminInventario.html" data-v-if="usuarioRol === 'admin'">
                         Administrador de Inventario
                     </a>
                     
-                    <a class="nav-link active ms-lg-auto" href="cuenta.html" v-if="!usuarioLogueado">Cuenta</a>
+                    <a class="nav-link active ms-lg-auto" href="cuenta.html" data-v-if="!usuarioLogueado">Cuenta</a>
                     
-                    <template v-if="usuarioLogueado">
+                    <template data-v-if="usuarioLogueado">
                         <span class="nav-link text-success fw-bold ms-lg-auto">Hola, {{ nombreUsuario }}</span>
                         <button class="btn btn-outline-danger btn-sm ms-lg-2" @click="logout">
                             Cerrar sesión
@@ -54,9 +54,9 @@
 
             <div class="row justify-content-center">
                 
-                <template v-if="!usuarioLogueado">
+                <template data-v-if="!usuarioLogueado">
                     
-                    <div class="col-12 col-md-8 col-lg-6" v-show="mostrarLogin">
+                    <div class="col-12 col-md-8 col-lg-6" data-v-show="mostrarLogin">
                         <div class="formulario">
                             <h3 class="text-center">Iniciar Sesión</h3>
                             <form id="login-form" class="form-container mt-4">
@@ -76,7 +76,7 @@
                         </div>
                     </div>
 
-                    <div class="col-12 col-md-8 col-lg-6" v-show="!mostrarLogin">
+                    <div class="col-12 col-md-8 col-lg-6" data-v-show="!mostrarLogin">
                         <div class="formulario">
                             <h3 class="text-center">Crear Cuenta</h3>
                             <form id="register-form" class="form-container mt-4">
@@ -123,8 +123,9 @@
                     </div>
                 </template>
 
-                <div class="col-12 text-center py-5" v-else>
-                    <h2 class="text-success">¡Bienvenido de nuevo, {{ nombreUsuario }}!</h2>
+                <div class="col-12 text-center py-5" data-v-else>
+                    <!-- Cambiado a h1 con estilo h2 para resolver la advertencia de estructura semántica -->
+                    <h1 class="text-success h2">¡Bienvenido de nuevo, {{ nombreUsuario }}!</h1>
                     <p>Ya puedes acceder a todas las funciones de la tienda.</p>
                     <a href="catalogo.html" class="btn btn-outline-light mt-3">Ir al Catálogo</a>
                 </div>
